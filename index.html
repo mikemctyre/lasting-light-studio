@@ -346,9 +346,14 @@
     <div class="card">
       <h2>Cash on Hand</h2>
       <div class="row">
-        <label>Current bank balance</label>
-        <input type="text" id="b_cashOnHand" value="0" oninput="calc('b')">
+        <label>Current in bank</label>
+        <input type="text" id="b_cashBank" value="0" oninput="calc('b')">
       </div>
+      <div class="row">
+        <label>Pending</label>
+        <input type="text" id="b_cashPending" value="0" oninput="calc('b')">
+      </div>
+      <div class="section-total">Total: $<span id="b_cashTotal">0</span></div>
     </div>
 
     <div class="card">
@@ -446,9 +451,14 @@
     <div class="card">
       <h2>Cash on Hand</h2>
       <div class="row">
-        <label>Current bank balance</label>
-        <input type="text" id="s_cashOnHand" value="0" oninput="calc('s')">
+        <label>Current in bank</label>
+        <input type="text" id="s_cashBank" value="0" oninput="calc('s')">
       </div>
+      <div class="row">
+        <label>Pending</label>
+        <input type="text" id="s_cashPending" value="0" oninput="calc('s')">
+      </div>
+      <div class="section-total">Total: $<span id="s_cashTotal">0</span></div>
     </div>
 
     <div class="card">
@@ -578,7 +588,10 @@ function removeLine(btn, prefix) {
 }
 
 function calc(p) {
-  const cash = parseCurrency(document.getElementById(p + '_cashOnHand').value);
+  const cashBank = parseCurrency(document.getElementById(p + '_cashBank').value);
+  const cashPending = parseCurrency(document.getElementById(p + '_cashPending').value);
+  const cash = cashBank + cashPending;
+  document.getElementById(p + '_cashTotal').textContent = formatCurrency(cash);
 
   const people = sumSection(p + '_peopleCosts');
   const tools = sumSection(p + '_toolsCosts');
@@ -670,7 +683,8 @@ function setSectionData(sectionId, prefix, items) {
 
 function getFullState() {
   return {
-    cash: document.getElementById('b_cashOnHand').value,
+    cashBank: document.getElementById('b_cashBank').value,
+    cashPending: document.getElementById('b_cashPending').value,
     people: getSectionData('b_peopleCosts'),
     tools: getSectionData('b_toolsCosts'),
     other: getSectionData('b_otherCosts'),
@@ -679,7 +693,8 @@ function getFullState() {
 }
 
 function loadState(state, prefix) {
-  document.getElementById(prefix + '_cashOnHand').value = state.cash || '0';
+  document.getElementById(prefix + '_cashBank').value = state.cashBank || state.cash || '0';
+  document.getElementById(prefix + '_cashPending').value = state.cashPending || '0';
   setSectionData(prefix + '_peopleCosts', prefix, state.people || []);
   setSectionData(prefix + '_toolsCosts', prefix, state.tools || []);
   setSectionData(prefix + '_otherCosts', prefix, state.other || []);
