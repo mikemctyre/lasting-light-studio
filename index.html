@@ -320,6 +320,35 @@
     font-weight: 400;
     margin-left: 0.5rem;
   }
+
+  .salary-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.6rem;
+    align-items: center;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid #2a2a44;
+  }
+
+  .salary-row label {
+    font-size: 0.8rem;
+    color: #aaa;
+    white-space: nowrap;
+  }
+
+  .salary-row .money-input {
+    width: 120px;
+  }
+
+  .salary-monthly {
+    font-size: 0.8rem;
+    color: #c4a0ff;
+    white-space: nowrap;
+  }
+
+  .panel-sandbox .salary-monthly {
+    color: #4ade80;
+  }
 </style>
 </head>
 <body>
@@ -370,12 +399,12 @@
 
     <div class="card">
       <h2>People Costs (Monthly)</h2>
+      <div class="salary-row">
+        <label>Co-Founder Salary (annual)</label>
+        <input type="text" class="money-input" id="b_cofounderSalary" value="$0" oninput="fmtAndCalc(this,'b')">
+        <span class="salary-monthly" id="b_cofounderMonthly">= $0/mo</span>
+      </div>
       <div class="line-items" id="b_peopleCosts">
-        <div class="line-item">
-          <input type="text" placeholder="Role or name" value="Founder salary">
-          <input type="text" class="money-input" placeholder="$/mo" value="$0" oninput="fmtAndCalc(this,'b')">
-          <button class="btn-remove" onclick="removeLine(this,'b')" title="Remove">&times;</button>
-        </div>
       </div>
       <button class="btn-add" onclick="addLine('b_peopleCosts','b')">+ Add person</button>
       <div class="section-total">Subtotal: <span id="b_peopleCostsTotal">$0</span>/mo</div>
@@ -488,12 +517,12 @@
 
     <div class="card">
       <h2>People Costs (Monthly)</h2>
+      <div class="salary-row">
+        <label>Co-Founder Salary (annual)</label>
+        <input type="text" class="money-input" id="s_cofounderSalary" value="$0" oninput="fmtAndCalc(this,'s')">
+        <span class="salary-monthly" id="s_cofounderMonthly">= $0/mo</span>
+      </div>
       <div class="line-items" id="s_peopleCosts">
-        <div class="line-item">
-          <input type="text" placeholder="Role or name" value="Founder salary">
-          <input type="text" class="money-input" placeholder="$/mo" value="$0" oninput="fmtAndCalc(this,'s')">
-          <button class="btn-remove" onclick="removeLine(this,'s')" title="Remove">&times;</button>
-        </div>
       </div>
       <button class="btn-add" onclick="addLine('s_peopleCosts','s')">+ Add person</button>
       <div class="section-total">Subtotal: <span id="s_peopleCostsTotal">$0</span>/mo</div>
@@ -637,7 +666,12 @@ function calc(p) {
   const debt = debtReimburse + debtInvoices;
   document.getElementById(p + '_debtTotal').textContent = fmtMoney(debt);
 
-  const people = sumSectionMoney(p + '_peopleCosts');
+  const cofounderAnnual = parseMoney(document.getElementById(p + '_cofounderSalary').value);
+  const cofounderMonthly = Math.round(cofounderAnnual / 12);
+  document.getElementById(p + '_cofounderMonthly').textContent = '= ' + fmtMoney(cofounderMonthly) + '/mo';
+
+  const peopleOther = sumSectionMoney(p + '_peopleCosts');
+  const people = cofounderMonthly + peopleOther;
   const tools = sumSectionMoney(p + '_toolsCosts');
   const other = sumSectionMoney(p + '_otherCosts');
   const revenue = sumSectionMoney(p + '_revenueSources');
@@ -734,6 +768,7 @@ function getFullState() {
     cashPending: parseMoney(document.getElementById('b_cashPending').value),
     debtReimbursement: parseMoney(document.getElementById('b_debtReimbursement').value),
     debtInvoices: parseMoney(document.getElementById('b_debtInvoices').value),
+    cofounderSalary: parseMoney(document.getElementById('b_cofounderSalary').value),
     people: getSectionData('b_peopleCosts'),
     tools: getSectionData('b_toolsCosts'),
     other: getSectionData('b_otherCosts'),
@@ -746,6 +781,7 @@ function loadState(state, prefix) {
   document.getElementById(prefix + '_cashPending').value = fmtMoney(state.cashPending || 0);
   document.getElementById(prefix + '_debtReimbursement').value = fmtMoney(state.debtReimbursement || 0);
   document.getElementById(prefix + '_debtInvoices').value = fmtMoney(state.debtInvoices || 0);
+  document.getElementById(prefix + '_cofounderSalary').value = fmtMoney(state.cofounderSalary || 0);
   setSectionData(prefix + '_peopleCosts', prefix, state.people || []);
   setSectionData(prefix + '_toolsCosts', prefix, state.tools || []);
   setSectionData(prefix + '_otherCosts', prefix, state.other || []);
