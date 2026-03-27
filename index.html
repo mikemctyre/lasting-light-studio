@@ -12,10 +12,12 @@
     background: #0f0f1a;
     color: #e0e0e0;
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 2rem 1rem;
+    padding: 1.5rem 1rem;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 1.5rem;
   }
 
   h1 {
@@ -28,52 +30,130 @@
   .subtitle {
     color: #888;
     font-size: 0.85rem;
-    margin-bottom: 2rem;
+    margin-bottom: 0.75rem;
   }
 
-  .container {
-    width: 100%;
-    max-width: 720px;
+  .share-bar {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-share {
+    background: linear-gradient(135deg, #7c3aed, #a855f7);
+    border: none;
+    color: #fff;
+    padding: 0.5rem 1.25rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: opacity 0.2s;
+  }
+
+  .btn-share:hover { opacity: 0.85; }
+
+  .share-link-box {
+    background: #12122a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 0.4rem 0.75rem;
+    color: #4ade80;
+    font-size: 0.75rem;
+    max-width: 400px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: none;
+  }
+
+  .viewer-banner {
+    background: linear-gradient(135deg, #1a1040, #2a1a4a);
+    border: 1px solid #c4a0ff44;
+    border-radius: 10px;
+    padding: 0.75rem 1.25rem;
+    text-align: center;
+    font-size: 0.85rem;
+    color: #c4a0ff;
+    display: none;
+  }
+
+  .panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 900px) {
+    .panels { grid-template-columns: 1fr; }
+  }
+
+  .panel {
+    min-width: 0;
+  }
+
+  .panel-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding: 0.6rem 1rem;
+    border-radius: 10px;
+    text-align: center;
+  }
+
+  .panel-baseline .panel-title {
+    background: linear-gradient(135deg, #1a1040, #2a1a4a);
+    color: #c4a0ff;
+    border: 1px solid #c4a0ff44;
+  }
+
+  .panel-sandbox .panel-title {
+    background: linear-gradient(135deg, #0a2a1a, #1a3a2a);
+    color: #4ade80;
+    border: 1px solid #4ade8044;
   }
 
   .card {
     background: #1a1a2e;
     border: 1px solid #2a2a44;
     border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 1.25rem;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
   }
 
   .card h2 {
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: #c4a0ff;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    margin-bottom: 0.75rem;
   }
+
+  .panel-sandbox .card h2 { color: #4ade80; }
 
   .row {
     display: flex;
-    gap: 1rem;
-    margin-bottom: 0.75rem;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
     align-items: center;
   }
 
   .row label {
     flex: 1;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: #aaa;
   }
 
   .row input {
-    width: 140px;
-    padding: 0.5rem 0.75rem;
+    width: 120px;
+    padding: 0.4rem 0.6rem;
     background: #12122a;
     border: 1px solid #333;
     border-radius: 8px;
     color: #fff;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     text-align: right;
     outline: none;
     transition: border-color 0.2s;
@@ -85,32 +165,32 @@
 
   .line-item {
     display: flex;
-    gap: 0.75rem;
-    margin-bottom: 0.5rem;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
     align-items: center;
   }
 
   .line-item input[type="text"] {
     flex: 1;
-    padding: 0.5rem 0.75rem;
+    padding: 0.4rem 0.6rem;
     background: #12122a;
     border: 1px solid #333;
     border-radius: 8px;
     color: #fff;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     outline: none;
   }
 
   .line-item input[type="text"]:focus { border-color: #c4a0ff; }
 
   .line-item input[type="number"] {
-    width: 120px;
-    padding: 0.5rem 0.75rem;
+    width: 100px;
+    padding: 0.4rem 0.6rem;
     background: #12122a;
     border: 1px solid #333;
     border-radius: 8px;
     color: #fff;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     text-align: right;
     outline: none;
   }
@@ -122,8 +202,8 @@
     border: none;
     color: #ff6b6b;
     cursor: pointer;
-    font-size: 1.1rem;
-    padding: 0.25rem;
+    font-size: 1rem;
+    padding: 0.2rem;
     opacity: 0.6;
     transition: opacity 0.2s;
   }
@@ -135,9 +215,9 @@
     border: 1px dashed #444;
     border-radius: 8px;
     color: #888;
-    padding: 0.4rem 1rem;
+    padding: 0.35rem 0.85rem;
     cursor: pointer;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     transition: all 0.2s;
   }
 
@@ -145,26 +225,25 @@
 
   .section-total {
     text-align: right;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: #aaa;
-    padding-top: 0.5rem;
+    padding-top: 0.4rem;
     border-top: 1px solid #2a2a44;
-    margin-top: 0.5rem;
+    margin-top: 0.4rem;
   }
 
-  .section-total span { color: #fff; font-weight: 600; font-size: 1rem; }
+  .section-total span { color: #fff; font-weight: 600; font-size: 0.9rem; }
 
-  /* Results */
   .results-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+    gap: 0.75rem;
   }
 
   .result-box {
     background: #12122a;
     border-radius: 10px;
-    padding: 1rem;
+    padding: 0.75rem;
     text-align: center;
   }
 
@@ -174,30 +253,36 @@
     border: 1px solid #c4a0ff44;
   }
 
+  .panel-sandbox .result-box.highlight {
+    background: linear-gradient(135deg, #0a2a1a, #1a3a2a);
+    border: 1px solid #4ade8044;
+  }
+
   .result-label {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: #888;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.25rem;
   }
 
   .result-value {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     font-weight: 700;
     color: #fff;
   }
 
-  .result-box.highlight .result-value { color: #c4a0ff; font-size: 1.8rem; }
+  .result-box.highlight .result-value { color: #c4a0ff; font-size: 1.5rem; }
+  .panel-sandbox .result-box.highlight .result-value { color: #4ade80; }
 
   .runway-bar-container {
-    margin-top: 1rem;
+    margin-top: 0.75rem;
     grid-column: 1 / -1;
   }
 
   .runway-bar-bg {
     width: 100%;
-    height: 10px;
+    height: 8px;
     background: #2a2a44;
     border-radius: 5px;
     overflow: hidden;
@@ -210,121 +295,246 @@
   }
 
   .runway-note {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: #666;
-    margin-top: 0.35rem;
+    margin-top: 0.25rem;
     text-align: center;
   }
 
   .green { color: #4ade80; }
   .yellow { color: #facc15; }
   .red { color: #f87171; }
+
+  .locked input {
+    pointer-events: none;
+    opacity: 0.7;
+  }
+
+  .locked .btn-add,
+  .locked .btn-remove {
+    display: none;
+  }
+
+  .lock-badge {
+    font-size: 0.7rem;
+    color: #888;
+    font-weight: 400;
+    margin-left: 0.5rem;
+  }
 </style>
 </head>
 <body>
 
-<h1>Lasting Light Studio</h1>
-<p class="subtitle">Monthly Burn Rate Calculator</p>
+<div class="header">
+  <h1>Lasting Light Studio</h1>
+  <p class="subtitle">Monthly Burn Rate Calculator</p>
+  <div class="share-bar" id="shareBar">
+    <button class="btn-share" onclick="generateShareLink()">Share Baseline with Team</button>
+    <div class="share-link-box" id="shareLinkBox"></div>
+  </div>
+  <div class="viewer-banner" id="viewerBanner">
+    You're viewing the team baseline on the left. Use the Sandbox on the right to explore scenarios.
+  </div>
+</div>
 
-<div class="container">
+<div class="panels">
 
-  <!-- Cash on Hand -->
-  <div class="card">
-    <h2>Cash on Hand</h2>
-    <div class="row">
-      <label>Current bank balance</label>
-      <input type="text" id="cashOnHand" value="0" oninput="calculate()">
+  <!-- LEFT: Baseline -->
+  <div class="panel panel-baseline" id="baselinePanel">
+    <div class="panel-title">Baseline<span class="lock-badge" id="baselineBadge"></span></div>
+
+    <div class="card">
+      <h2>Cash on Hand</h2>
+      <div class="row">
+        <label>Current bank balance</label>
+        <input type="text" id="b_cashOnHand" value="0" oninput="calc('b')">
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>People Costs (Monthly)</h2>
+      <div class="line-items" id="b_peopleCosts">
+        <div class="line-item">
+          <input type="text" placeholder="Role or name" value="Founder salary">
+          <input type="number" placeholder="$/mo" value="0" oninput="calc('b')">
+          <button class="btn-remove" onclick="removeLine(this,'b')" title="Remove">&times;</button>
+        </div>
+      </div>
+      <button class="btn-add" onclick="addLine('b_peopleCosts','b')">+ Add person</button>
+      <div class="section-total">Subtotal: $<span id="b_peopleCostsTotal">0</span>/mo</div>
+    </div>
+
+    <div class="card">
+      <h2>Tools & Services (Monthly)</h2>
+      <div class="line-items" id="b_toolsCosts">
+        <div class="line-item">
+          <input type="text" placeholder="Service name" value="Cloud / hosting">
+          <input type="number" placeholder="$/mo" value="0" oninput="calc('b')">
+          <button class="btn-remove" onclick="removeLine(this,'b')" title="Remove">&times;</button>
+        </div>
+        <div class="line-item">
+          <input type="text" placeholder="Service name" value="Software licenses">
+          <input type="number" placeholder="$/mo" value="0" oninput="calc('b')">
+          <button class="btn-remove" onclick="removeLine(this,'b')" title="Remove">&times;</button>
+        </div>
+      </div>
+      <button class="btn-add" onclick="addLine('b_toolsCosts','b')">+ Add service</button>
+      <div class="section-total">Subtotal: $<span id="b_toolsCostsTotal">0</span>/mo</div>
+    </div>
+
+    <div class="card">
+      <h2>Other Costs (Monthly)</h2>
+      <div class="line-items" id="b_otherCosts">
+        <div class="line-item">
+          <input type="text" placeholder="Description" value="Office / coworking">
+          <input type="number" placeholder="$/mo" value="0" oninput="calc('b')">
+          <button class="btn-remove" onclick="removeLine(this,'b')" title="Remove">&times;</button>
+        </div>
+      </div>
+      <button class="btn-add" onclick="addLine('b_otherCosts','b')">+ Add expense</button>
+      <div class="section-total">Subtotal: $<span id="b_otherCostsTotal">0</span>/mo</div>
+    </div>
+
+    <div class="card">
+      <h2>Monthly Revenue (Optional)</h2>
+      <div class="line-items" id="b_revenueSources">
+        <div class="line-item">
+          <input type="text" placeholder="Source" value="Revenue">
+          <input type="number" placeholder="$/mo" value="0" oninput="calc('b')">
+          <button class="btn-remove" onclick="removeLine(this,'b')" title="Remove">&times;</button>
+        </div>
+      </div>
+      <button class="btn-add" onclick="addLine('b_revenueSources','b')">+ Add source</button>
+      <div class="section-total">Subtotal: $<span id="b_revenueTotal">0</span>/mo</div>
+    </div>
+
+    <div class="card">
+      <h2>Summary</h2>
+      <div class="results-grid">
+        <div class="result-box">
+          <div class="result-label">Gross Burn</div>
+          <div class="result-value" id="b_grossBurn">$0</div>
+        </div>
+        <div class="result-box">
+          <div class="result-label">Net Burn</div>
+          <div class="result-value" id="b_netBurn">$0</div>
+        </div>
+        <div class="result-box highlight">
+          <div class="result-label">Runway</div>
+          <div class="result-value" id="b_runway">-- months</div>
+        </div>
+        <div class="result-box">
+          <div class="result-label">Daily Burn</div>
+          <div class="result-value" id="b_dailyBurn">$0</div>
+        </div>
+        <div class="result-box">
+          <div class="result-label">Weekly Burn</div>
+          <div class="result-value" id="b_weeklyBurn">$0</div>
+        </div>
+        <div class="runway-bar-container">
+          <div class="runway-bar-bg"><div class="runway-bar-fill" id="b_runwayBar"></div></div>
+          <div class="runway-note" id="b_runwayNote"></div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- People Costs -->
-  <div class="card">
-    <h2>People Costs (Monthly)</h2>
-    <div class="line-items" id="peopleCosts">
-      <div class="line-item">
-        <input type="text" placeholder="Role or name" value="Founder salary">
-        <input type="number" placeholder="$/mo" value="0" oninput="calculate()">
-        <button class="btn-remove" onclick="removeLine(this)" title="Remove">&times;</button>
+  <!-- RIGHT: Sandbox -->
+  <div class="panel panel-sandbox" id="sandboxPanel">
+    <div class="panel-title">Sandbox — Your Scenario</div>
+
+    <div class="card">
+      <h2>Cash on Hand</h2>
+      <div class="row">
+        <label>Current bank balance</label>
+        <input type="text" id="s_cashOnHand" value="0" oninput="calc('s')">
       </div>
     </div>
-    <button class="btn-add" onclick="addLine('peopleCosts')">+ Add person</button>
-    <div class="section-total">Subtotal: $<span id="peopleCostsTotal">0</span>/mo</div>
-  </div>
 
-  <!-- Tools & Services -->
-  <div class="card">
-    <h2>Tools & Services (Monthly)</h2>
-    <div class="line-items" id="toolsCosts">
-      <div class="line-item">
-        <input type="text" placeholder="Service name" value="Cloud / hosting">
-        <input type="number" placeholder="$/mo" value="0" oninput="calculate()">
-        <button class="btn-remove" onclick="removeLine(this)" title="Remove">&times;</button>
+    <div class="card">
+      <h2>People Costs (Monthly)</h2>
+      <div class="line-items" id="s_peopleCosts">
+        <div class="line-item">
+          <input type="text" placeholder="Role or name" value="Founder salary">
+          <input type="number" placeholder="$/mo" value="0" oninput="calc('s')">
+          <button class="btn-remove" onclick="removeLine(this,'s')" title="Remove">&times;</button>
+        </div>
       </div>
-      <div class="line-item">
-        <input type="text" placeholder="Service name" value="Software licenses">
-        <input type="number" placeholder="$/mo" value="0" oninput="calculate()">
-        <button class="btn-remove" onclick="removeLine(this)" title="Remove">&times;</button>
-      </div>
+      <button class="btn-add" onclick="addLine('s_peopleCosts','s')">+ Add person</button>
+      <div class="section-total">Subtotal: $<span id="s_peopleCostsTotal">0</span>/mo</div>
     </div>
-    <button class="btn-add" onclick="addLine('toolsCosts')">+ Add service</button>
-    <div class="section-total">Subtotal: $<span id="toolsCostsTotal">0</span>/mo</div>
-  </div>
 
-  <!-- Other Costs -->
-  <div class="card">
-    <h2>Other Costs (Monthly)</h2>
-    <div class="line-items" id="otherCosts">
-      <div class="line-item">
-        <input type="text" placeholder="Description" value="Office / coworking">
-        <input type="number" placeholder="$/mo" value="0" oninput="calculate()">
-        <button class="btn-remove" onclick="removeLine(this)" title="Remove">&times;</button>
+    <div class="card">
+      <h2>Tools & Services (Monthly)</h2>
+      <div class="line-items" id="s_toolsCosts">
+        <div class="line-item">
+          <input type="text" placeholder="Service name" value="Cloud / hosting">
+          <input type="number" placeholder="$/mo" value="0" oninput="calc('s')">
+          <button class="btn-remove" onclick="removeLine(this,'s')" title="Remove">&times;</button>
+        </div>
+        <div class="line-item">
+          <input type="text" placeholder="Service name" value="Software licenses">
+          <input type="number" placeholder="$/mo" value="0" oninput="calc('s')">
+          <button class="btn-remove" onclick="removeLine(this,'s')" title="Remove">&times;</button>
+        </div>
       </div>
+      <button class="btn-add" onclick="addLine('s_toolsCosts','s')">+ Add service</button>
+      <div class="section-total">Subtotal: $<span id="s_toolsCostsTotal">0</span>/mo</div>
     </div>
-    <button class="btn-add" onclick="addLine('otherCosts')">+ Add expense</button>
-    <div class="section-total">Subtotal: $<span id="otherCostsTotal">0</span>/mo</div>
-  </div>
 
-  <!-- Monthly Revenue -->
-  <div class="card">
-    <h2>Monthly Revenue (Optional)</h2>
-    <div class="line-items" id="revenueSources">
-      <div class="line-item">
-        <input type="text" placeholder="Source" value="Revenue">
-        <input type="number" placeholder="$/mo" value="0" oninput="calculate()">
-        <button class="btn-remove" onclick="removeLine(this)" title="Remove">&times;</button>
+    <div class="card">
+      <h2>Other Costs (Monthly)</h2>
+      <div class="line-items" id="s_otherCosts">
+        <div class="line-item">
+          <input type="text" placeholder="Description" value="Office / coworking">
+          <input type="number" placeholder="$/mo" value="0" oninput="calc('s')">
+          <button class="btn-remove" onclick="removeLine(this,'s')" title="Remove">&times;</button>
+        </div>
       </div>
+      <button class="btn-add" onclick="addLine('s_otherCosts','s')">+ Add expense</button>
+      <div class="section-total">Subtotal: $<span id="s_otherCostsTotal">0</span>/mo</div>
     </div>
-    <button class="btn-add" onclick="addLine('revenueSources')">+ Add source</button>
-    <div class="section-total">Subtotal: $<span id="revenueTotal">0</span>/mo</div>
-  </div>
 
-  <!-- Results -->
-  <div class="card">
-    <h2>Summary</h2>
-    <div class="results-grid">
-      <div class="result-box">
-        <div class="result-label">Gross Burn</div>
-        <div class="result-value" id="grossBurn">$0</div>
+    <div class="card">
+      <h2>Monthly Revenue (Optional)</h2>
+      <div class="line-items" id="s_revenueSources">
+        <div class="line-item">
+          <input type="text" placeholder="Source" value="Revenue">
+          <input type="number" placeholder="$/mo" value="0" oninput="calc('s')">
+          <button class="btn-remove" onclick="removeLine(this,'s')" title="Remove">&times;</button>
+        </div>
       </div>
-      <div class="result-box">
-        <div class="result-label">Net Burn</div>
-        <div class="result-value" id="netBurn">$0</div>
-      </div>
-      <div class="result-box highlight">
-        <div class="result-label">Runway</div>
-        <div class="result-value" id="runway">— months</div>
-      </div>
-      <div class="result-box">
-        <div class="result-label">Daily Burn</div>
-        <div class="result-value" id="dailyBurn">$0</div>
-      </div>
-      <div class="result-box">
-        <div class="result-label">Weekly Burn</div>
-        <div class="result-value" id="weeklyBurn">$0</div>
-      </div>
-      <div class="runway-bar-container">
-        <div class="runway-bar-bg"><div class="runway-bar-fill" id="runwayBar"></div></div>
-        <div class="runway-note" id="runwayNote"></div>
+      <button class="btn-add" onclick="addLine('s_revenueSources','s')">+ Add source</button>
+      <div class="section-total">Subtotal: $<span id="s_revenueTotal">0</span>/mo</div>
+    </div>
+
+    <div class="card">
+      <h2>Summary</h2>
+      <div class="results-grid">
+        <div class="result-box">
+          <div class="result-label">Gross Burn</div>
+          <div class="result-value" id="s_grossBurn">$0</div>
+        </div>
+        <div class="result-box">
+          <div class="result-label">Net Burn</div>
+          <div class="result-value" id="s_netBurn">$0</div>
+        </div>
+        <div class="result-box highlight">
+          <div class="result-label">Runway</div>
+          <div class="result-value" id="s_runway">-- months</div>
+        </div>
+        <div class="result-box">
+          <div class="result-label">Daily Burn</div>
+          <div class="result-value" id="s_dailyBurn">$0</div>
+        </div>
+        <div class="result-box">
+          <div class="result-label">Weekly Burn</div>
+          <div class="result-value" id="s_weeklyBurn">$0</div>
+        </div>
+        <div class="runway-bar-container">
+          <div class="runway-bar-bg"><div class="runway-bar-fill" id="s_runwayBar"></div></div>
+          <div class="runway-note" id="s_runwayNote"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -347,55 +557,55 @@ function sumSection(id) {
   return total;
 }
 
-function addLine(sectionId) {
+function addLine(sectionId, prefix) {
   const container = document.getElementById(sectionId);
   const div = document.createElement('div');
   div.className = 'line-item';
   div.innerHTML = `
     <input type="text" placeholder="Description">
-    <input type="number" placeholder="$/mo" value="0" oninput="calculate()">
-    <button class="btn-remove" onclick="removeLine(this)" title="Remove">&times;</button>
+    <input type="number" placeholder="$/mo" value="0" oninput="calc('${prefix}')">
+    <button class="btn-remove" onclick="removeLine(this,'${prefix}')" title="Remove">&times;</button>
   `;
   container.appendChild(div);
 }
 
-function removeLine(btn) {
+function removeLine(btn, prefix) {
   const section = btn.closest('.line-items');
   if (section.children.length > 1) {
     btn.parentElement.remove();
-    calculate();
+    calc(prefix);
   }
 }
 
-function calculate() {
-  const cash = parseCurrency(document.getElementById('cashOnHand').value);
+function calc(p) {
+  const cash = parseCurrency(document.getElementById(p + '_cashOnHand').value);
 
-  const people = sumSection('peopleCosts');
-  const tools = sumSection('toolsCosts');
-  const other = sumSection('otherCosts');
-  const revenue = sumSection('revenueSources');
+  const people = sumSection(p + '_peopleCosts');
+  const tools = sumSection(p + '_toolsCosts');
+  const other = sumSection(p + '_otherCosts');
+  const revenue = sumSection(p + '_revenueSources');
 
-  document.getElementById('peopleCostsTotal').textContent = formatCurrency(people);
-  document.getElementById('toolsCostsTotal').textContent = formatCurrency(tools);
-  document.getElementById('otherCostsTotal').textContent = formatCurrency(other);
-  document.getElementById('revenueTotal').textContent = formatCurrency(revenue);
+  document.getElementById(p + '_peopleCostsTotal').textContent = formatCurrency(people);
+  document.getElementById(p + '_toolsCostsTotal').textContent = formatCurrency(tools);
+  document.getElementById(p + '_otherCostsTotal').textContent = formatCurrency(other);
+  document.getElementById(p + '_revenueTotal').textContent = formatCurrency(revenue);
 
   const grossBurn = people + tools + other;
   const netBurn = grossBurn - revenue;
   const dailyBurn = netBurn / 30;
   const weeklyBurn = netBurn / 4.33;
 
-  document.getElementById('grossBurn').textContent = '$' + formatCurrency(grossBurn);
-  document.getElementById('netBurn').textContent = '$' + formatCurrency(netBurn);
-  document.getElementById('dailyBurn').textContent = '$' + formatCurrency(Math.round(dailyBurn));
-  document.getElementById('weeklyBurn').textContent = '$' + formatCurrency(Math.round(weeklyBurn));
+  document.getElementById(p + '_grossBurn').textContent = '$' + formatCurrency(grossBurn);
+  document.getElementById(p + '_netBurn').textContent = '$' + formatCurrency(netBurn);
+  document.getElementById(p + '_dailyBurn').textContent = '$' + formatCurrency(Math.round(dailyBurn));
+  document.getElementById(p + '_weeklyBurn').textContent = '$' + formatCurrency(Math.round(weeklyBurn));
 
-  const bar = document.getElementById('runwayBar');
-  const note = document.getElementById('runwayNote');
-  const runwayEl = document.getElementById('runway');
+  const bar = document.getElementById(p + '_runwayBar');
+  const note = document.getElementById(p + '_runwayNote');
+  const runwayEl = document.getElementById(p + '_runway');
 
   if (netBurn <= 0) {
-    runwayEl.textContent = cash > 0 ? 'Sustainable' : '— months';
+    runwayEl.textContent = cash > 0 ? 'Sustainable' : '-- months';
     runwayEl.className = 'result-value green';
     bar.style.width = '100%';
     bar.style.background = '#4ade80';
@@ -408,10 +618,8 @@ function calculate() {
   } else {
     const months = cash / netBurn;
     runwayEl.textContent = months.toFixed(1) + ' months';
-
     const pct = Math.min(100, (months / 24) * 100);
     bar.style.width = pct + '%';
-
     if (months >= 12) {
       runwayEl.className = 'result-value green';
       bar.style.background = '#4ade80';
@@ -419,16 +627,142 @@ function calculate() {
     } else if (months >= 6) {
       runwayEl.className = 'result-value yellow';
       bar.style.background = '#facc15';
-      note.textContent = 'Start planning — under 12 months';
+      note.textContent = 'Start planning -- under 12 months';
     } else {
       runwayEl.className = 'result-value red';
       bar.style.background = '#f87171';
-      note.textContent = 'Critical — under 6 months of runway';
+      note.textContent = 'Critical -- under 6 months of runway';
     }
+  }
+
+  // If owner is editing baseline, auto-save to localStorage and sync to sandbox
+  if (p === 'b' && !isViewer) {
+    saveBaseline();
+    cloneBaselineToSandbox();
   }
 }
 
-calculate();
+// --- Data serialization ---
+function getSectionData(sectionId) {
+  const items = [];
+  document.querySelectorAll('#' + sectionId + ' .line-item').forEach(row => {
+    const name = row.querySelector('input[type="text"]').value;
+    const amount = row.querySelector('input[type="number"]').value;
+    items.push({ name, amount });
+  });
+  return items;
+}
+
+function setSectionData(sectionId, prefix, items) {
+  const container = document.getElementById(sectionId);
+  container.innerHTML = '';
+  items.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'line-item';
+    div.innerHTML = `
+      <input type="text" placeholder="Description" value="${item.name.replace(/"/g, '&quot;')}">
+      <input type="number" placeholder="$/mo" value="${item.amount}" oninput="calc('${prefix}')">
+      <button class="btn-remove" onclick="removeLine(this,'${prefix}')" title="Remove">&times;</button>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function getFullState() {
+  return {
+    cash: document.getElementById('b_cashOnHand').value,
+    people: getSectionData('b_peopleCosts'),
+    tools: getSectionData('b_toolsCosts'),
+    other: getSectionData('b_otherCosts'),
+    revenue: getSectionData('b_revenueSources')
+  };
+}
+
+function loadState(state, prefix) {
+  document.getElementById(prefix + '_cashOnHand').value = state.cash || '0';
+  setSectionData(prefix + '_peopleCosts', prefix, state.people || []);
+  setSectionData(prefix + '_toolsCosts', prefix, state.tools || []);
+  setSectionData(prefix + '_otherCosts', prefix, state.other || []);
+  setSectionData(prefix + '_revenueSources', prefix, state.revenue || []);
+  calc(prefix);
+}
+
+// --- Persistence ---
+function saveBaseline() {
+  try {
+    localStorage.setItem('llsBurnBaseline', JSON.stringify(getFullState()));
+  } catch(e) {}
+}
+
+function loadSavedBaseline() {
+  try {
+    const saved = localStorage.getItem('llsBurnBaseline');
+    if (saved) {
+      const state = JSON.parse(saved);
+      loadState(state, 'b');
+      return true;
+    }
+  } catch(e) {}
+  return false;
+}
+
+// --- Share link (encodes baseline in URL hash) ---
+function generateShareLink() {
+  const state = getFullState();
+  const encoded = btoa(encodeURIComponent(JSON.stringify(state)));
+  const url = window.location.origin + window.location.pathname + '#d=' + encoded;
+  navigator.clipboard.writeText(url).then(() => {
+    const box = document.getElementById('shareLinkBox');
+    box.textContent = 'Link copied to clipboard!';
+    box.style.display = 'block';
+    setTimeout(() => { box.style.display = 'none'; }, 3000);
+  }).catch(() => {
+    const box = document.getElementById('shareLinkBox');
+    box.textContent = url;
+    box.style.display = 'block';
+  });
+}
+
+function getSharedState() {
+  const hash = window.location.hash;
+  if (hash.startsWith('#d=')) {
+    try {
+      const decoded = decodeURIComponent(atob(hash.slice(3)));
+      return JSON.parse(decoded);
+    } catch(e) {}
+  }
+  return null;
+}
+
+// --- Clone baseline to sandbox ---
+function cloneBaselineToSandbox() {
+  const state = getFullState();
+  loadState(state, 's');
+}
+
+// --- Init ---
+let isViewer = false;
+
+function init() {
+  const shared = getSharedState();
+
+  if (shared) {
+    // Viewer mode: baseline is locked, sandbox is editable
+    isViewer = true;
+    loadState(shared, 'b');
+    loadState(shared, 's');
+    document.getElementById('baselinePanel').classList.add('locked');
+    document.getElementById('baselineBadge').textContent = '(locked)';
+    document.getElementById('shareBar').style.display = 'none';
+    document.getElementById('viewerBanner').style.display = 'block';
+  } else {
+    // Owner mode: load saved baseline, sync to sandbox
+    loadSavedBaseline();
+    cloneBaselineToSandbox();
+  }
+}
+
+init();
 </script>
 </body>
 </html>
