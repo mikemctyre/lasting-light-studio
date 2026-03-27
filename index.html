@@ -406,6 +406,19 @@
 </head>
 <body>
 
+<!-- Password Gate -->
+<div id="loginGate" style="display:flex; justify-content:center; align-items:center; min-height:100vh;">
+  <div style="background:#1a1a2e; border:1px solid #2a2a44; border-radius:12px; padding:2rem; text-align:center; max-width:360px; width:100%;">
+    <h1 style="font-size:1.4rem; color:#c4a0ff; margin-bottom:0.25rem;">Lasting Light Studio</h1>
+    <p style="color:#888; font-size:0.8rem; margin-bottom:1.5rem;">Enter password to continue</p>
+    <input type="password" id="pwInput" placeholder="Password" style="width:100%; padding:0.6rem 1rem; background:#12122a; border:1px solid #333; border-radius:8px; color:#fff; font-size:0.9rem; outline:none; margin-bottom:0.75rem; text-align:center;" onkeydown="if(event.key==='Enter')checkPw()">
+    <br>
+    <button onclick="checkPw()" style="background:linear-gradient(135deg,#7c3aed,#a855f7); border:none; color:#fff; padding:0.5rem 2rem; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:600;">Enter</button>
+    <p id="pwError" style="color:#f87171; font-size:0.8rem; margin-top:0.75rem; display:none;">Incorrect password</p>
+  </div>
+</div>
+
+<div id="mainApp" style="display:none;">
 <div class="header">
   <h1>Lasting Light Studio</h1>
   <p class="subtitle">Monthly Burn Rate Calculator</p>
@@ -1050,7 +1063,26 @@ function init() {
   }
 }
 
-init();
+// Only init after password check
+function checkPw() {
+  const pw = document.getElementById('pwInput').value;
+  if (pw === 'ainativedev') {
+    document.getElementById('loginGate').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
+    sessionStorage.setItem('llsAuth', '1');
+    init();
+  } else {
+    document.getElementById('pwError').style.display = 'block';
+  }
+}
+
+// Auto-login if already authenticated this session
+if (sessionStorage.getItem('llsAuth') === '1') {
+  document.getElementById('loginGate').style.display = 'none';
+  document.getElementById('mainApp').style.display = 'block';
+  init();
+}
 </script>
+</div><!-- end mainApp -->
 </body>
 </html>
