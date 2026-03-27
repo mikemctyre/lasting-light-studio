@@ -1014,10 +1014,28 @@ function loadSavedBaseline() {
 }
 
 // --- Share link ---
-function generateShareLink() {
+// --- Compression helpers ---
+async function compressStr(str) {
+  const blob = new Blob([str]);
+  const stream = blob.stream().pipeThrough(new CompressionStream('deflate'));
+  const buf = await new Response(stream).arrayBuffer();
+  let binary = '';
+  new Uint8Array(buf).forEach(b => binary += String.fromCharCode(b));
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+async function decompressStr(encoded) {
+  const binary = atob(encoded.replace(/-/g, '+').replace(/_/g, '/'));
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate'));
+  return await new Response(stream).text();
+}
+
+async function generateShareLink() {
   const state = getFullState();
-  const encoded = btoa(encodeURIComponent(JSON.stringify(state)));
-  const url = window.location.origin + window.location.pathname + '#d=' + encoded;
+  const compressed = await compressStr(JSON.stringify(state));
+  const url = window.location.origin + window.location.pathname + '#z=' + compressed;
   navigator.clipboard.writeText(url).then(() => {
     const box = document.getElementById('shareLinkBox');
     box.textContent = 'Link copied to clipboard!';
@@ -1030,8 +1048,16 @@ function generateShareLink() {
   });
 }
 
-function getSharedState() {
+async function getSharedState() {
   const hash = window.location.hash;
+  // New compressed format
+  if (hash.startsWith('#z=')) {
+    try {
+      const json = await decompressStr(hash.slice(3));
+      return JSON.parse(json);
+    } catch(e) {}
+  }
+  // Legacy uncompressed format
   if (hash.startsWith('#d=')) {
     try {
       return JSON.parse(decodeURIComponent(atob(hash.slice(3))));
@@ -1047,8 +1073,8 @@ function cloneBaselineToSandbox() {
 // --- Init ---
 let isViewer = false;
 
-function init() {
-  const shared = getSharedState();
+async function init() {
+  const shared = await getSharedState();
   if (shared) {
     isViewer = true;
     loadState(shared, 'b');
