@@ -356,6 +356,52 @@
   .panel-sandbox .salary-monthly {
     color: #4ade80;
   }
+
+  .codev-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
+    align-items: center;
+  }
+
+  .codev-row .name-input {
+    flex: 1;
+    padding: 0.4rem 0.6rem;
+    background: #12122a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.8rem;
+    outline: none;
+  }
+
+  .codev-row .name-input:focus { border-color: #c4a0ff; }
+
+  .emp-input {
+    width: 55px;
+    padding: 0.4rem 0.6rem;
+    background: #12122a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.8rem;
+    text-align: center;
+    outline: none;
+  }
+
+  .emp-input:focus { border-color: #c4a0ff; }
+
+  .codev-total {
+    font-size: 0.75rem;
+    color: #c4a0ff;
+    white-space: nowrap;
+    min-width: 80px;
+    text-align: right;
+  }
+
+  .panel-sandbox .codev-total {
+    color: #4ade80;
+  }
 </style>
 </head>
 <body>
@@ -434,13 +480,15 @@
     <div class="card">
       <h2>Co-Dev (Monthly)</h2>
       <div class="line-items" id="b_codev">
-        <div class="line-item">
-          <input type="text" placeholder="Person / Service">
-          <input type="text" class="money-input" placeholder="$/mo" value="$0" oninput="fmtAndCalc(this,'b')">
-          <button class="btn-remove" onclick="removeLine(this,'b')" title="Remove">&times;</button>
+        <div class="codev-row">
+          <input type="text" class="name-input" placeholder="Co-Dev name">
+          <input type="text" class="emp-input" placeholder="# Emp" value="1" oninput="calcCodev(this,'b')">
+          <input type="text" class="money-input" placeholder="Rate" value="$0" oninput="fmtAndCalcCodev(this,'b')">
+          <span class="codev-total">= $0/mo</span>
+          <button class="btn-remove" onclick="removeCodev(this,'b')" title="Remove">&times;</button>
         </div>
       </div>
-      <button class="btn-add" onclick="addLine('b_codev','b')">+ Add co-dev</button>
+      <button class="btn-add" onclick="addCodev('b_codev','b')">+ Add co-dev</button>
       <div class="section-total">Subtotal: <span id="b_codevTotal">$0</span>/mo</div>
     </div>
 
@@ -553,13 +601,15 @@
     <div class="card">
       <h2>Co-Dev (Monthly)</h2>
       <div class="line-items" id="s_codev">
-        <div class="line-item">
-          <input type="text" placeholder="Person / Service">
-          <input type="text" class="money-input" placeholder="$/mo" value="$0" oninput="fmtAndCalc(this,'s')">
-          <button class="btn-remove" onclick="removeLine(this,'s')" title="Remove">&times;</button>
+        <div class="codev-row">
+          <input type="text" class="name-input" placeholder="Co-Dev name">
+          <input type="text" class="emp-input" placeholder="# Emp" value="1" oninput="calcCodev(this,'s')">
+          <input type="text" class="money-input" placeholder="Rate" value="$0" oninput="fmtAndCalcCodev(this,'s')">
+          <span class="codev-total">= $0/mo</span>
+          <button class="btn-remove" onclick="removeCodev(this,'s')" title="Remove">&times;</button>
         </div>
       </div>
-      <button class="btn-add" onclick="addLine('s_codev','s')">+ Add co-dev</button>
+      <button class="btn-add" onclick="addCodev('s_codev','s')">+ Add co-dev</button>
       <div class="section-total">Subtotal: <span id="s_codevTotal">$0</span>/mo</div>
     </div>
 
@@ -685,6 +735,44 @@ function removePerson(btn, prefix) {
   }
 }
 
+function addCodev(sectionId, prefix) {
+  const container = document.getElementById(sectionId);
+  const div = document.createElement('div');
+  div.className = 'codev-row';
+  div.innerHTML = `
+    <input type="text" class="name-input" placeholder="Co-Dev name">
+    <input type="text" class="emp-input" placeholder="# Emp" value="1" oninput="calcCodev(this,'${prefix}')">
+    <input type="text" class="money-input" placeholder="Rate" value="$0" oninput="fmtAndCalcCodev(this,'${prefix}')">
+    <span class="codev-total">= $0/mo</span>
+    <button class="btn-remove" onclick="removeCodev(this,'${prefix}')" title="Remove">&times;</button>
+  `;
+  container.appendChild(div);
+}
+
+function removeCodev(btn, prefix) {
+  const section = btn.closest('.line-items');
+  if (section.children.length > 1) {
+    btn.parentElement.remove();
+    calc(prefix);
+  }
+}
+
+function fmtAndCalcCodev(input, prefix) {
+  const raw = parseMoney(input.value);
+  const formatted = fmtMoney(raw);
+  const oldLen = input.value.length;
+  const cursorPos = input.selectionStart;
+  input.value = formatted;
+  const newLen = formatted.length;
+  const newPos = Math.max(1, cursorPos + (newLen - oldLen));
+  input.setSelectionRange(newPos, newPos);
+  calc(prefix);
+}
+
+function calcCodev(input, prefix) {
+  calc(prefix);
+}
+
 function addInsurance(sectionId, prefix) {
   const container = document.getElementById(sectionId);
   const div = document.createElement('div');
@@ -717,7 +805,15 @@ function calc(p) {
     people += monthly;
   });
   const insurance = sumSectionMoney(p + '_insurance');
-  const codev = sumSectionMoney(p + '_codev');
+  // Calculate co-dev: each row is employees x rate
+  let codev = 0;
+  document.querySelectorAll('#' + p + '_codev .codev-row').forEach(row => {
+    const emp = parseInt(row.querySelector('.emp-input').value) || 0;
+    const rate = parseMoney(row.querySelector('.money-input').value);
+    const total = emp * rate;
+    row.querySelector('.codev-total').textContent = '= ' + fmtMoney(total) + '/mo';
+    codev += total;
+  });
   const tools = sumSectionMoney(p + '_toolsCosts');
 
   document.getElementById(p + '_peopleCostsTotal').textContent = fmtMoney(people);
@@ -832,6 +928,35 @@ function setSectionData(sectionId, prefix, items) {
   });
 }
 
+function getCodevData(sectionId) {
+  const items = [];
+  document.querySelectorAll('#' + sectionId + ' .codev-row').forEach(row => {
+    const name = row.querySelector('.name-input').value;
+    const emp = parseInt(row.querySelector('.emp-input').value) || 0;
+    const rate = parseMoney(row.querySelector('.money-input').value);
+    items.push({ name, emp, rate });
+  });
+  return items;
+}
+
+function setCodevData(sectionId, prefix, items) {
+  const container = document.getElementById(sectionId);
+  container.innerHTML = '';
+  items.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'codev-row';
+    const total = (item.emp || 0) * (item.rate || 0);
+    div.innerHTML = `
+      <input type="text" class="name-input" placeholder="Co-Dev name" value="${String(item.name).replace(/"/g, '&quot;')}">
+      <input type="text" class="emp-input" placeholder="# Emp" value="${item.emp || 1}" oninput="calcCodev(this,'${prefix}')">
+      <input type="text" class="money-input" placeholder="Rate" value="${fmtMoney(item.rate || 0)}" oninput="fmtAndCalcCodev(this,'${prefix}')">
+      <span class="codev-total">= ${fmtMoney(total)}/mo</span>
+      <button class="btn-remove" onclick="removeCodev(this,'${prefix}')" title="Remove">&times;</button>
+    `;
+    container.appendChild(div);
+  });
+}
+
 function getFullState() {
   return {
     cashBank: parseMoney(document.getElementById('b_cashBank').value),
@@ -840,7 +965,7 @@ function getFullState() {
     debtInvoices: parseMoney(document.getElementById('b_debtInvoices').value),
     people: getPeopleData('b_peopleCosts'),
     insurance: getSectionData('b_insurance'),
-    codev: getSectionData('b_codev'),
+    codev: getCodevData('b_codev'),
     tools: getSectionData('b_toolsCosts')
   };
 }
@@ -852,7 +977,7 @@ function loadState(state, prefix) {
   document.getElementById(prefix + '_debtInvoices').value = fmtMoney(state.debtInvoices || 0);
   setPeopleData(prefix + '_peopleCosts', prefix, state.people || []);
   setSectionData(prefix + '_insurance', prefix, state.insurance || []);
-  setSectionData(prefix + '_codev', prefix, state.codev || []);
+  setCodevData(prefix + '_codev', prefix, state.codev || []);
   setSectionData(prefix + '_toolsCosts', prefix, state.tools || []);
   calc(prefix);
 }
