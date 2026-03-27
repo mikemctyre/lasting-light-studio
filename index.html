@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lasting Light Studio — Burn Rate Calculator</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #0f0f1a;
+    color: #e0e0e0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #c4a0ff;
+    margin-bottom: 0.25rem;
+  }
+
+  .subtitle {
+    color: #888;
+    font-size: 0.85rem;
+    margin-bottom: 2rem;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 720px;
+  }
+
+  .card {
+    background: #1a1a2e;
+    border: 1px solid #2a2a44;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .card h2 {
+    font-size: 1rem;
+    color: #c4a0ff;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+    align-items: center;
+  }
+
+  .row label {
+    flex: 1;
+    font-size: 0.85rem;
+    color: #aaa;
+  }
+
+  .row input {
+    width: 140px;
+    padding: 0.5rem 0.75rem;
+    background: #12122a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.95rem;
+    text-align: right;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .row input:focus { border-color: #c4a0ff; }
+
+  .line-items { margin-bottom: 0.5rem; }
+
+  .line-item {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+    align-items: center;
+  }
+
+  .line-item input[type="text"] {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    background: #12122a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.85rem;
+    outline: none;
+  }
+
+  .line-item input[type="text"]:focus { border-color: #c4a0ff; }
+
+  .line-item input[type="number"] {
+    width: 120px;
+    padding: 0.5rem 0.75rem;
+    background: #12122a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.85rem;
+    text-align: right;
+    outline: none;
+  }
+
+  .line-item input[type="number"]:focus { border-color: #c4a0ff; }
+
+  .btn-remove {
+    background: none;
+    border: none;
+    color: #ff6b6b;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 0.25rem;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+  }
+
+  .btn-remove:hover { opacity: 1; }
+
+  .btn-add {
+    background: none;
+    border: 1px dashed #444;
+    border-radius: 8px;
+    color: #888;
+    padding: 0.4rem 1rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+  }
+
+  .btn-add:hover { border-color: #c4a0ff; color: #c4a0ff; }
+
+  .section-total {
+    text-align: right;
+    font-size: 0.9rem;
+    color: #aaa;
+    padding-top: 0.5rem;
+    border-top: 1px solid #2a2a44;
+    margin-top: 0.5rem;
+  }
+
+  .section-total span { color: #fff; font-weight: 600; font-size: 1rem; }
+
+  /* Results */
+  .results-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .result-box {
+    background: #12122a;
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .result-box.highlight {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, #1a1040, #2a1a4a);
+    border: 1px solid #c4a0ff44;
+  }
+
+  .result-label {
+    font-size: 0.75rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.35rem;
+  }
+
+  .result-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .result-box.highlight .result-value { color: #c4a0ff; font-size: 1.8rem; }
+
+  .runway-bar-container {
+    margin-top: 1rem;
+    grid-column: 1 / -1;
+  }
+
+  .runway-bar-bg {
+    width: 100%;
+    height: 10px;
+    background: #2a2a44;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+
+  .runway-bar-fill {
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.5s ease, background 0.5s ease;
+  }
+
+  .runway-note {
+    font-size: 0.75rem;
+    color: #666;
+    margin-top: 0.35rem;
+    text-align: center;
+  }
+
+  .green { color: #4ade80; }
+  .yellow { color: #facc15; }
+  .red { color: #f87171; }
+</style>
+</head>
+<body>
+
+<h1>Lasting Light Studio</h1>
+<p class="subtitle">Monthly Burn Rate Calculator</p>
+
+<div class="container">
+
+  <!-- Cash on Hand -->
+  <div class="card">
+    <h2>Cash on Hand</h2>
+    <div class="row">
+      <label>Current bank balance</label>
+      <input type="text" id="cashOnHand" value="0" oninput="calculate()">
+    </div>
+  </div>
+
+  <!-- People Costs -->
+  <div class="card">
+    <h2>People Costs (Monthly)</h2>
+    <div class="line-items" id="peopleCosts">
+      <div class="line-item">
+        <input type="text" placeholder="Role or name" value="Founder salary">
+        <input type="number" placeholder="$/mo" value="0" oninput="calculate()">
+        <button class="btn-remove" onclick="removeLine(this)" title="Remove">&times;</button>
+      </div>
+    </div>
+    <button class="btn-add" onclick="addLine('peopleCosts')">+ Add person</button>
+    <div class="section-total">Subtotal: $<span id="peopleCostsTotal">0</span>/mo</div>
+  </div>
+
+  <!-- Tools & Services -->
+  <div class="card">
+    <h2>Tools & Services (Monthly)</h2>
+    <div class="line-items" id="toolsCosts">
+      <div class="line-item">
+        <input type="text" placeholder="Service name" value="Cloud / hosting">
+        <input type="number" placeholder="$/mo" value="0" oninput="calculate()">
+        <button class="btn-remove" onclick="removeLine(this)" title="Remove">&times;</button>
+      </div>
+      <div class="line-item">
+        <input type="text" placeholder="Service name" value="Software licenses">
+        <input type="number" placeholder="$/mo" value="0" oninput="calculate()">
+        <button class="btn-remove" onclick="removeLine(this)" title="Remove">&times;</button>
+      </div>
+    </div>
+    <button class="btn-add" onclick="addLine('toolsCosts')">+ Add service</button>
+    <div class="section-total">Subtotal: $<span id="toolsCostsTotal">0</span>/mo</div>
+  </div>
+
+  <!-- Other Costs -->
+  <div class="card">
+    <h2>Other Costs (Monthly)</h2>
+    <div class="line-items" id="otherCosts">
+      <div class="line-item">
+        <input type="text" placeholder="Description" value="Office / coworking">
+        <input type="number" placeholder="$/mo" value="0" oninput="calculate()">
+        <button class="btn-remove" onclick="removeLine(this)" title="Remove">&times;</button>
+      </div>
+    </div>
+    <button class="btn-add" onclick="addLine('otherCosts')">+ Add expense</button>
+    <div class="section-total">Subtotal: $<span id="otherCostsTotal">0</span>/mo</div>
+  </div>
+
+  <!-- Monthly Revenue -->
+  <div class="card">
+    <h2>Monthly Revenue (Optional)</h2>
+    <div class="line-items" id="revenueSources">
+      <div class="line-item">
+        <input type="text" placeholder="Source" value="Revenue">
+        <input type="number" placeholder="$/mo" value="0" oninput="calculate()">
+        <button class="btn-remove" onclick="removeLine(this)" title="Remove">&times;</button>
+      </div>
+    </div>
+    <button class="btn-add" onclick="addLine('revenueSources')">+ Add source</button>
+    <div class="section-total">Subtotal: $<span id="revenueTotal">0</span>/mo</div>
+  </div>
+
+  <!-- Results -->
+  <div class="card">
+    <h2>Summary</h2>
+    <div class="results-grid">
+      <div class="result-box">
+        <div class="result-label">Gross Burn</div>
+        <div class="result-value" id="grossBurn">$0</div>
+      </div>
+      <div class="result-box">
+        <div class="result-label">Net Burn</div>
+        <div class="result-value" id="netBurn">$0</div>
+      </div>
+      <div class="result-box highlight">
+        <div class="result-label">Runway</div>
+        <div class="result-value" id="runway">— months</div>
+      </div>
+      <div class="result-box">
+        <div class="result-label">Daily Burn</div>
+        <div class="result-value" id="dailyBurn">$0</div>
+      </div>
+      <div class="result-box">
+        <div class="result-label">Weekly Burn</div>
+        <div class="result-value" id="weeklyBurn">$0</div>
+      </div>
+      <div class="runway-bar-container">
+        <div class="runway-bar-bg"><div class="runway-bar-fill" id="runwayBar"></div></div>
+        <div class="runway-note" id="runwayNote"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function parseCurrency(str) {
+  return parseFloat(str.replace(/[^0-9.\-]/g, '')) || 0;
+}
+
+function formatCurrency(n) {
+  return n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+}
+
+function sumSection(id) {
+  const items = document.querySelectorAll('#' + id + ' input[type="number"]');
+  let total = 0;
+  items.forEach(i => total += parseFloat(i.value) || 0);
+  return total;
+}
+
+function addLine(sectionId) {
+  const container = document.getElementById(sectionId);
+  const div = document.createElement('div');
+  div.className = 'line-item';
+  div.innerHTML = `
+    <input type="text" placeholder="Description">
+    <input type="number" placeholder="$/mo" value="0" oninput="calculate()">
+    <button class="btn-remove" onclick="removeLine(this)" title="Remove">&times;</button>
+  `;
+  container.appendChild(div);
+}
+
+function removeLine(btn) {
+  const section = btn.closest('.line-items');
+  if (section.children.length > 1) {
+    btn.parentElement.remove();
+    calculate();
+  }
+}
+
+function calculate() {
+  const cash = parseCurrency(document.getElementById('cashOnHand').value);
+
+  const people = sumSection('peopleCosts');
+  const tools = sumSection('toolsCosts');
+  const other = sumSection('otherCosts');
+  const revenue = sumSection('revenueSources');
+
+  document.getElementById('peopleCostsTotal').textContent = formatCurrency(people);
+  document.getElementById('toolsCostsTotal').textContent = formatCurrency(tools);
+  document.getElementById('otherCostsTotal').textContent = formatCurrency(other);
+  document.getElementById('revenueTotal').textContent = formatCurrency(revenue);
+
+  const grossBurn = people + tools + other;
+  const netBurn = grossBurn - revenue;
+  const dailyBurn = netBurn / 30;
+  const weeklyBurn = netBurn / 4.33;
+
+  document.getElementById('grossBurn').textContent = '$' + formatCurrency(grossBurn);
+  document.getElementById('netBurn').textContent = '$' + formatCurrency(netBurn);
+  document.getElementById('dailyBurn').textContent = '$' + formatCurrency(Math.round(dailyBurn));
+  document.getElementById('weeklyBurn').textContent = '$' + formatCurrency(Math.round(weeklyBurn));
+
+  const bar = document.getElementById('runwayBar');
+  const note = document.getElementById('runwayNote');
+  const runwayEl = document.getElementById('runway');
+
+  if (netBurn <= 0) {
+    runwayEl.textContent = cash > 0 ? 'Sustainable' : '— months';
+    runwayEl.className = 'result-value green';
+    bar.style.width = '100%';
+    bar.style.background = '#4ade80';
+    note.textContent = netBurn < 0 ? 'Revenue exceeds expenses' : 'No burn';
+  } else if (cash <= 0) {
+    runwayEl.textContent = '0 months';
+    runwayEl.className = 'result-value red';
+    bar.style.width = '0%';
+    note.textContent = 'No cash on hand';
+  } else {
+    const months = cash / netBurn;
+    runwayEl.textContent = months.toFixed(1) + ' months';
+
+    const pct = Math.min(100, (months / 24) * 100);
+    bar.style.width = pct + '%';
+
+    if (months >= 12) {
+      runwayEl.className = 'result-value green';
+      bar.style.background = '#4ade80';
+      note.textContent = 'Healthy runway (12+ months)';
+    } else if (months >= 6) {
+      runwayEl.className = 'result-value yellow';
+      bar.style.background = '#facc15';
+      note.textContent = 'Start planning — under 12 months';
+    } else {
+      runwayEl.className = 'result-value red';
+      bar.style.background = '#f87171';
+      note.textContent = 'Critical — under 6 months of runway';
+    }
+  }
+}
+
+calculate();
+</script>
+</body>
+</html>
