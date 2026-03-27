@@ -1014,53 +1014,45 @@ function loadSavedBaseline() {
 }
 
 // --- Share link ---
-// --- Compression helpers ---
-async function compressStr(str) {
-  const blob = new Blob([str]);
-  const stream = blob.stream().pipeThrough(new CompressionStream('deflate'));
-  const buf = await new Response(stream).arrayBuffer();
-  let binary = '';
-  new Uint8Array(buf).forEach(b => binary += String.fromCharCode(b));
-  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-}
-
-async function decompressStr(encoded) {
-  const binary = atob(encoded.replace(/-/g, '+').replace(/_/g, '/'));
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-  const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate'));
-  return await new Response(stream).text();
-}
-
+// --- Share via jsonblob.com (free, no signup, short URLs) ---
 async function generateShareLink() {
   const state = getFullState();
-  const compressed = await compressStr(JSON.stringify(state));
-  const url = window.location.origin + window.location.pathname + '#z=' + compressed;
-  navigator.clipboard.writeText(url).then(() => {
-    const box = document.getElementById('shareLinkBox');
+  const box = document.getElementById('shareLinkBox');
+  box.textContent = 'Creating share link...';
+  box.style.display = 'block';
+  try {
+    const resp = await fetch('https://jsonblob.com/api/jsonBlob', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(state)
+    });
+    const blobUrl = resp.headers.get('Location') || resp.headers.get('location');
+    const blobId = blobUrl.split('/').pop();
+    const url = window.location.origin + window.location.pathname + '#s=' + blobId;
+    await navigator.clipboard.writeText(url);
     box.textContent = 'Link copied to clipboard!';
-    box.style.display = 'block';
     setTimeout(() => { box.style.display = 'none'; }, 3000);
-  }).catch(() => {
-    const box = document.getElementById('shareLinkBox');
-    box.textContent = url;
-    box.style.display = 'block';
-  });
+  } catch(e) {
+    box.textContent = 'Failed to create link. Try again.';
+    box.style.color = '#f87171';
+    setTimeout(() => { box.style.display = 'none'; box.style.color = '#4ade80'; }, 3000);
+  }
 }
 
 async function getSharedState() {
   const hash = window.location.hash;
-  // New compressed format
-  if (hash.startsWith('#z=')) {
+  // Short link via jsonblob
+  if (hash.startsWith('#s=')) {
     try {
-      const json = await decompressStr(hash.slice(3));
-      return JSON.parse(json);
+      const blobId = hash.slice(3);
+      const resp = await fetch('https://jsonblob.com/api/jsonBlob/' + blobId);
+      return await resp.json();
     } catch(e) {}
   }
-  // Legacy uncompressed format
-  if (hash.startsWith('#d=')) {
+  // Legacy compressed format
+  if (hash.startsWith('#z=') || hash.startsWith('#d=')) {
     try {
-      return JSON.parse(decodeURIComponent(atob(hash.slice(3))));
+      if (hash.startsWith('#d=')) return JSON.parse(decodeURIComponent(atob(hash.slice(3))));
     } catch(e) {}
   }
   return null;
