@@ -92,9 +92,7 @@
     .panels { grid-template-columns: 1fr; }
   }
 
-  .panel {
-    min-width: 0;
-  }
+  .panel { min-width: 0; }
 
   .panel-title {
     font-size: 1rem;
@@ -146,7 +144,7 @@
     color: #aaa;
   }
 
-  .row input {
+  .row input, .money-input {
     width: 120px;
     padding: 0.4rem 0.6rem;
     background: #12122a;
@@ -159,7 +157,7 @@
     transition: border-color 0.2s;
   }
 
-  .row input:focus { border-color: #c4a0ff; }
+  .row input:focus, .money-input:focus { border-color: #c4a0ff; }
 
   .line-items { margin-bottom: 0.5rem; }
 
@@ -170,7 +168,7 @@
     align-items: center;
   }
 
-  .line-item input[type="text"] {
+  .line-item input[type="text"]:first-child {
     flex: 1;
     padding: 0.4rem 0.6rem;
     background: #12122a;
@@ -179,12 +177,13 @@
     color: #fff;
     font-size: 0.8rem;
     outline: none;
+    text-align: left;
   }
 
-  .line-item input[type="text"]:focus { border-color: #c4a0ff; }
+  .line-item input[type="text"]:first-child:focus { border-color: #c4a0ff; }
 
-  .line-item input[type="number"] {
-    width: 100px;
+  .line-item .money-input {
+    width: 120px;
     padding: 0.4rem 0.6rem;
     background: #12122a;
     border: 1px solid #333;
@@ -195,7 +194,7 @@
     outline: none;
   }
 
-  .line-item input[type="number"]:focus { border-color: #c4a0ff; }
+  .line-item .money-input:focus { border-color: #c4a0ff; }
 
   .btn-remove {
     background: none;
@@ -347,13 +346,26 @@
       <h2>Cash on Hand</h2>
       <div class="row">
         <label>Current in bank</label>
-        <input type="text" id="b_cashBank" value="0" oninput="calc('b')">
+        <input type="text" class="money-input" id="b_cashBank" value="$0" oninput="fmtAndCalc(this,'b')">
       </div>
       <div class="row">
         <label>Pending</label>
-        <input type="text" id="b_cashPending" value="0" oninput="calc('b')">
+        <input type="text" class="money-input" id="b_cashPending" value="$0" oninput="fmtAndCalc(this,'b')">
       </div>
-      <div class="section-total">Total: $<span id="b_cashTotal">0</span></div>
+      <div class="section-total">Total: <span id="b_cashTotal">$0</span></div>
+    </div>
+
+    <div class="card">
+      <h2>Debt / Owed</h2>
+      <div class="row">
+        <label>Reimbursements owed</label>
+        <input type="text" class="money-input" id="b_debtReimbursement" value="$0" oninput="fmtAndCalc(this,'b')">
+      </div>
+      <div class="row">
+        <label>Outstanding invoices</label>
+        <input type="text" class="money-input" id="b_debtInvoices" value="$0" oninput="fmtAndCalc(this,'b')">
+      </div>
+      <div class="section-total">Total Debt: <span id="b_debtTotal">$0</span></div>
     </div>
 
     <div class="card">
@@ -361,12 +373,12 @@
       <div class="line-items" id="b_peopleCosts">
         <div class="line-item">
           <input type="text" placeholder="Role or name" value="Founder salary">
-          <input type="number" placeholder="$/mo" value="0" oninput="calc('b')">
+          <input type="text" class="money-input" placeholder="$/mo" value="$0" oninput="fmtAndCalc(this,'b')">
           <button class="btn-remove" onclick="removeLine(this,'b')" title="Remove">&times;</button>
         </div>
       </div>
       <button class="btn-add" onclick="addLine('b_peopleCosts','b')">+ Add person</button>
-      <div class="section-total">Subtotal: $<span id="b_peopleCostsTotal">0</span>/mo</div>
+      <div class="section-total">Subtotal: <span id="b_peopleCostsTotal">$0</span>/mo</div>
     </div>
 
     <div class="card">
@@ -374,17 +386,17 @@
       <div class="line-items" id="b_toolsCosts">
         <div class="line-item">
           <input type="text" placeholder="Service name" value="Cloud / hosting">
-          <input type="number" placeholder="$/mo" value="0" oninput="calc('b')">
+          <input type="text" class="money-input" placeholder="$/mo" value="$0" oninput="fmtAndCalc(this,'b')">
           <button class="btn-remove" onclick="removeLine(this,'b')" title="Remove">&times;</button>
         </div>
         <div class="line-item">
           <input type="text" placeholder="Service name" value="Software licenses">
-          <input type="number" placeholder="$/mo" value="0" oninput="calc('b')">
+          <input type="text" class="money-input" placeholder="$/mo" value="$0" oninput="fmtAndCalc(this,'b')">
           <button class="btn-remove" onclick="removeLine(this,'b')" title="Remove">&times;</button>
         </div>
       </div>
       <button class="btn-add" onclick="addLine('b_toolsCosts','b')">+ Add service</button>
-      <div class="section-total">Subtotal: $<span id="b_toolsCostsTotal">0</span>/mo</div>
+      <div class="section-total">Subtotal: <span id="b_toolsCostsTotal">$0</span>/mo</div>
     </div>
 
     <div class="card">
@@ -392,12 +404,12 @@
       <div class="line-items" id="b_otherCosts">
         <div class="line-item">
           <input type="text" placeholder="Description" value="Office / coworking">
-          <input type="number" placeholder="$/mo" value="0" oninput="calc('b')">
+          <input type="text" class="money-input" placeholder="$/mo" value="$0" oninput="fmtAndCalc(this,'b')">
           <button class="btn-remove" onclick="removeLine(this,'b')" title="Remove">&times;</button>
         </div>
       </div>
       <button class="btn-add" onclick="addLine('b_otherCosts','b')">+ Add expense</button>
-      <div class="section-total">Subtotal: $<span id="b_otherCostsTotal">0</span>/mo</div>
+      <div class="section-total">Subtotal: <span id="b_otherCostsTotal">$0</span>/mo</div>
     </div>
 
     <div class="card">
@@ -405,12 +417,12 @@
       <div class="line-items" id="b_revenueSources">
         <div class="line-item">
           <input type="text" placeholder="Source" value="Revenue">
-          <input type="number" placeholder="$/mo" value="0" oninput="calc('b')">
+          <input type="text" class="money-input" placeholder="$/mo" value="$0" oninput="fmtAndCalc(this,'b')">
           <button class="btn-remove" onclick="removeLine(this,'b')" title="Remove">&times;</button>
         </div>
       </div>
       <button class="btn-add" onclick="addLine('b_revenueSources','b')">+ Add source</button>
-      <div class="section-total">Subtotal: $<span id="b_revenueTotal">0</span>/mo</div>
+      <div class="section-total">Subtotal: <span id="b_revenueTotal">$0</span>/mo</div>
     </div>
 
     <div class="card">
@@ -452,13 +464,26 @@
       <h2>Cash on Hand</h2>
       <div class="row">
         <label>Current in bank</label>
-        <input type="text" id="s_cashBank" value="0" oninput="calc('s')">
+        <input type="text" class="money-input" id="s_cashBank" value="$0" oninput="fmtAndCalc(this,'s')">
       </div>
       <div class="row">
         <label>Pending</label>
-        <input type="text" id="s_cashPending" value="0" oninput="calc('s')">
+        <input type="text" class="money-input" id="s_cashPending" value="$0" oninput="fmtAndCalc(this,'s')">
       </div>
-      <div class="section-total">Total: $<span id="s_cashTotal">0</span></div>
+      <div class="section-total">Total: <span id="s_cashTotal">$0</span></div>
+    </div>
+
+    <div class="card">
+      <h2>Debt / Owed</h2>
+      <div class="row">
+        <label>Reimbursements owed</label>
+        <input type="text" class="money-input" id="s_debtReimbursement" value="$0" oninput="fmtAndCalc(this,'s')">
+      </div>
+      <div class="row">
+        <label>Outstanding invoices</label>
+        <input type="text" class="money-input" id="s_debtInvoices" value="$0" oninput="fmtAndCalc(this,'s')">
+      </div>
+      <div class="section-total">Total Debt: <span id="s_debtTotal">$0</span></div>
     </div>
 
     <div class="card">
@@ -466,12 +491,12 @@
       <div class="line-items" id="s_peopleCosts">
         <div class="line-item">
           <input type="text" placeholder="Role or name" value="Founder salary">
-          <input type="number" placeholder="$/mo" value="0" oninput="calc('s')">
+          <input type="text" class="money-input" placeholder="$/mo" value="$0" oninput="fmtAndCalc(this,'s')">
           <button class="btn-remove" onclick="removeLine(this,'s')" title="Remove">&times;</button>
         </div>
       </div>
       <button class="btn-add" onclick="addLine('s_peopleCosts','s')">+ Add person</button>
-      <div class="section-total">Subtotal: $<span id="s_peopleCostsTotal">0</span>/mo</div>
+      <div class="section-total">Subtotal: <span id="s_peopleCostsTotal">$0</span>/mo</div>
     </div>
 
     <div class="card">
@@ -479,17 +504,17 @@
       <div class="line-items" id="s_toolsCosts">
         <div class="line-item">
           <input type="text" placeholder="Service name" value="Cloud / hosting">
-          <input type="number" placeholder="$/mo" value="0" oninput="calc('s')">
+          <input type="text" class="money-input" placeholder="$/mo" value="$0" oninput="fmtAndCalc(this,'s')">
           <button class="btn-remove" onclick="removeLine(this,'s')" title="Remove">&times;</button>
         </div>
         <div class="line-item">
           <input type="text" placeholder="Service name" value="Software licenses">
-          <input type="number" placeholder="$/mo" value="0" oninput="calc('s')">
+          <input type="text" class="money-input" placeholder="$/mo" value="$0" oninput="fmtAndCalc(this,'s')">
           <button class="btn-remove" onclick="removeLine(this,'s')" title="Remove">&times;</button>
         </div>
       </div>
       <button class="btn-add" onclick="addLine('s_toolsCosts','s')">+ Add service</button>
-      <div class="section-total">Subtotal: $<span id="s_toolsCostsTotal">0</span>/mo</div>
+      <div class="section-total">Subtotal: <span id="s_toolsCostsTotal">$0</span>/mo</div>
     </div>
 
     <div class="card">
@@ -497,12 +522,12 @@
       <div class="line-items" id="s_otherCosts">
         <div class="line-item">
           <input type="text" placeholder="Description" value="Office / coworking">
-          <input type="number" placeholder="$/mo" value="0" oninput="calc('s')">
+          <input type="text" class="money-input" placeholder="$/mo" value="$0" oninput="fmtAndCalc(this,'s')">
           <button class="btn-remove" onclick="removeLine(this,'s')" title="Remove">&times;</button>
         </div>
       </div>
       <button class="btn-add" onclick="addLine('s_otherCosts','s')">+ Add expense</button>
-      <div class="section-total">Subtotal: $<span id="s_otherCostsTotal">0</span>/mo</div>
+      <div class="section-total">Subtotal: <span id="s_otherCostsTotal">$0</span>/mo</div>
     </div>
 
     <div class="card">
@@ -510,12 +535,12 @@
       <div class="line-items" id="s_revenueSources">
         <div class="line-item">
           <input type="text" placeholder="Source" value="Revenue">
-          <input type="number" placeholder="$/mo" value="0" oninput="calc('s')">
+          <input type="text" class="money-input" placeholder="$/mo" value="$0" oninput="fmtAndCalc(this,'s')">
           <button class="btn-remove" onclick="removeLine(this,'s')" title="Remove">&times;</button>
         </div>
       </div>
       <button class="btn-add" onclick="addLine('s_revenueSources','s')">+ Add source</button>
-      <div class="section-total">Subtotal: $<span id="s_revenueTotal">0</span>/mo</div>
+      <div class="section-total">Subtotal: <span id="s_revenueTotal">$0</span>/mo</div>
     </div>
 
     <div class="card">
@@ -552,18 +577,32 @@
 </div>
 
 <script>
-function parseCurrency(str) {
-  return parseFloat(str.replace(/[^0-9.\-]/g, '')) || 0;
+// --- Currency formatting ---
+function parseMoney(str) {
+  return parseFloat(String(str).replace(/[^0-9.\-]/g, '')) || 0;
 }
 
-function formatCurrency(n) {
-  return n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+function fmtMoney(n) {
+  return '$' + Math.round(n).toLocaleString('en-US');
 }
 
-function sumSection(id) {
-  const items = document.querySelectorAll('#' + id + ' input[type="number"]');
+function fmtAndCalc(input, prefix) {
+  // Get raw number, reformat with $ and commas, preserve cursor
+  const raw = parseMoney(input.value);
+  const formatted = fmtMoney(raw);
+  const oldLen = input.value.length;
+  const cursorPos = input.selectionStart;
+  input.value = formatted;
+  const newLen = formatted.length;
+  const newPos = Math.max(1, cursorPos + (newLen - oldLen));
+  input.setSelectionRange(newPos, newPos);
+  calc(prefix);
+}
+
+function sumSectionMoney(id) {
+  const items = document.querySelectorAll('#' + id + ' .money-input');
   let total = 0;
-  items.forEach(i => total += parseFloat(i.value) || 0);
+  items.forEach(i => total += parseMoney(i.value));
   return total;
 }
 
@@ -573,7 +612,7 @@ function addLine(sectionId, prefix) {
   div.className = 'line-item';
   div.innerHTML = `
     <input type="text" placeholder="Description">
-    <input type="number" placeholder="$/mo" value="0" oninput="calc('${prefix}')">
+    <input type="text" class="money-input" placeholder="$/mo" value="$0" oninput="fmtAndCalc(this,'${prefix}')">
     <button class="btn-remove" onclick="removeLine(this,'${prefix}')" title="Remove">&times;</button>
   `;
   container.appendChild(div);
@@ -588,48 +627,56 @@ function removeLine(btn, prefix) {
 }
 
 function calc(p) {
-  const cashBank = parseCurrency(document.getElementById(p + '_cashBank').value);
-  const cashPending = parseCurrency(document.getElementById(p + '_cashPending').value);
+  const cashBank = parseMoney(document.getElementById(p + '_cashBank').value);
+  const cashPending = parseMoney(document.getElementById(p + '_cashPending').value);
   const cash = cashBank + cashPending;
-  document.getElementById(p + '_cashTotal').textContent = formatCurrency(cash);
+  document.getElementById(p + '_cashTotal').textContent = fmtMoney(cash);
 
-  const people = sumSection(p + '_peopleCosts');
-  const tools = sumSection(p + '_toolsCosts');
-  const other = sumSection(p + '_otherCosts');
-  const revenue = sumSection(p + '_revenueSources');
+  const debtReimburse = parseMoney(document.getElementById(p + '_debtReimbursement').value);
+  const debtInvoices = parseMoney(document.getElementById(p + '_debtInvoices').value);
+  const debt = debtReimburse + debtInvoices;
+  document.getElementById(p + '_debtTotal').textContent = fmtMoney(debt);
 
-  document.getElementById(p + '_peopleCostsTotal').textContent = formatCurrency(people);
-  document.getElementById(p + '_toolsCostsTotal').textContent = formatCurrency(tools);
-  document.getElementById(p + '_otherCostsTotal').textContent = formatCurrency(other);
-  document.getElementById(p + '_revenueTotal').textContent = formatCurrency(revenue);
+  const people = sumSectionMoney(p + '_peopleCosts');
+  const tools = sumSectionMoney(p + '_toolsCosts');
+  const other = sumSectionMoney(p + '_otherCosts');
+  const revenue = sumSectionMoney(p + '_revenueSources');
+
+  document.getElementById(p + '_peopleCostsTotal').textContent = fmtMoney(people);
+  document.getElementById(p + '_toolsCostsTotal').textContent = fmtMoney(tools);
+  document.getElementById(p + '_otherCostsTotal').textContent = fmtMoney(other);
+  document.getElementById(p + '_revenueTotal').textContent = fmtMoney(revenue);
 
   const grossBurn = people + tools + other;
   const netBurn = grossBurn - revenue;
   const dailyBurn = netBurn / 30;
   const weeklyBurn = netBurn / 4.33;
 
-  document.getElementById(p + '_grossBurn').textContent = '$' + formatCurrency(grossBurn);
-  document.getElementById(p + '_netBurn').textContent = '$' + formatCurrency(netBurn);
-  document.getElementById(p + '_dailyBurn').textContent = '$' + formatCurrency(Math.round(dailyBurn));
-  document.getElementById(p + '_weeklyBurn').textContent = '$' + formatCurrency(Math.round(weeklyBurn));
+  document.getElementById(p + '_grossBurn').textContent = fmtMoney(grossBurn);
+  document.getElementById(p + '_netBurn').textContent = fmtMoney(netBurn);
+  document.getElementById(p + '_dailyBurn').textContent = fmtMoney(Math.round(dailyBurn));
+  document.getElementById(p + '_weeklyBurn').textContent = fmtMoney(Math.round(weeklyBurn));
+
+  // Net cash = cash on hand minus debt
+  const netCash = cash - debt;
 
   const bar = document.getElementById(p + '_runwayBar');
   const note = document.getElementById(p + '_runwayNote');
   const runwayEl = document.getElementById(p + '_runway');
 
   if (netBurn <= 0) {
-    runwayEl.textContent = cash > 0 ? 'Sustainable' : '-- months';
+    runwayEl.textContent = netCash > 0 ? 'Sustainable' : '-- months';
     runwayEl.className = 'result-value green';
     bar.style.width = '100%';
     bar.style.background = '#4ade80';
     note.textContent = netBurn < 0 ? 'Revenue exceeds expenses' : 'No burn';
-  } else if (cash <= 0) {
+  } else if (netCash <= 0) {
     runwayEl.textContent = '0 months';
     runwayEl.className = 'result-value red';
     bar.style.width = '0%';
-    note.textContent = 'No cash on hand';
+    note.textContent = 'No available cash (debt exceeds cash)';
   } else {
-    const months = cash / netBurn;
+    const months = netCash / netBurn;
     runwayEl.textContent = months.toFixed(1) + ' months';
     const pct = Math.min(100, (months / 24) * 100);
     bar.style.width = pct + '%';
@@ -648,7 +695,6 @@ function calc(p) {
     }
   }
 
-  // If owner is editing baseline, auto-save to localStorage and sync to sandbox
   if (p === 'b' && !isViewer) {
     saveBaseline();
     cloneBaselineToSandbox();
@@ -660,7 +706,8 @@ function getSectionData(sectionId) {
   const items = [];
   document.querySelectorAll('#' + sectionId + ' .line-item').forEach(row => {
     const name = row.querySelector('input[type="text"]').value;
-    const amount = row.querySelector('input[type="number"]').value;
+    const money = row.querySelector('.money-input');
+    const amount = money ? parseMoney(money.value) : 0;
     items.push({ name, amount });
   });
   return items;
@@ -673,8 +720,8 @@ function setSectionData(sectionId, prefix, items) {
     const div = document.createElement('div');
     div.className = 'line-item';
     div.innerHTML = `
-      <input type="text" placeholder="Description" value="${item.name.replace(/"/g, '&quot;')}">
-      <input type="number" placeholder="$/mo" value="${item.amount}" oninput="calc('${prefix}')">
+      <input type="text" placeholder="Description" value="${String(item.name).replace(/"/g, '&quot;')}">
+      <input type="text" class="money-input" placeholder="$/mo" value="${fmtMoney(item.amount)}" oninput="fmtAndCalc(this,'${prefix}')">
       <button class="btn-remove" onclick="removeLine(this,'${prefix}')" title="Remove">&times;</button>
     `;
     container.appendChild(div);
@@ -683,8 +730,10 @@ function setSectionData(sectionId, prefix, items) {
 
 function getFullState() {
   return {
-    cashBank: document.getElementById('b_cashBank').value,
-    cashPending: document.getElementById('b_cashPending').value,
+    cashBank: parseMoney(document.getElementById('b_cashBank').value),
+    cashPending: parseMoney(document.getElementById('b_cashPending').value),
+    debtReimbursement: parseMoney(document.getElementById('b_debtReimbursement').value),
+    debtInvoices: parseMoney(document.getElementById('b_debtInvoices').value),
     people: getSectionData('b_peopleCosts'),
     tools: getSectionData('b_toolsCosts'),
     other: getSectionData('b_otherCosts'),
@@ -693,8 +742,10 @@ function getFullState() {
 }
 
 function loadState(state, prefix) {
-  document.getElementById(prefix + '_cashBank').value = state.cashBank || state.cash || '0';
-  document.getElementById(prefix + '_cashPending').value = state.cashPending || '0';
+  document.getElementById(prefix + '_cashBank').value = fmtMoney(state.cashBank || 0);
+  document.getElementById(prefix + '_cashPending').value = fmtMoney(state.cashPending || 0);
+  document.getElementById(prefix + '_debtReimbursement').value = fmtMoney(state.debtReimbursement || 0);
+  document.getElementById(prefix + '_debtInvoices').value = fmtMoney(state.debtInvoices || 0);
   setSectionData(prefix + '_peopleCosts', prefix, state.people || []);
   setSectionData(prefix + '_toolsCosts', prefix, state.tools || []);
   setSectionData(prefix + '_otherCosts', prefix, state.other || []);
@@ -713,15 +764,14 @@ function loadSavedBaseline() {
   try {
     const saved = localStorage.getItem('llsBurnBaseline');
     if (saved) {
-      const state = JSON.parse(saved);
-      loadState(state, 'b');
+      loadState(JSON.parse(saved), 'b');
       return true;
     }
   } catch(e) {}
   return false;
 }
 
-// --- Share link (encodes baseline in URL hash) ---
+// --- Share link ---
 function generateShareLink() {
   const state = getFullState();
   const encoded = btoa(encodeURIComponent(JSON.stringify(state)));
@@ -742,17 +792,14 @@ function getSharedState() {
   const hash = window.location.hash;
   if (hash.startsWith('#d=')) {
     try {
-      const decoded = decodeURIComponent(atob(hash.slice(3)));
-      return JSON.parse(decoded);
+      return JSON.parse(decodeURIComponent(atob(hash.slice(3))));
     } catch(e) {}
   }
   return null;
 }
 
-// --- Clone baseline to sandbox ---
 function cloneBaselineToSandbox() {
-  const state = getFullState();
-  loadState(state, 's');
+  loadState(getFullState(), 's');
 }
 
 // --- Init ---
@@ -760,9 +807,7 @@ let isViewer = false;
 
 function init() {
   const shared = getSharedState();
-
   if (shared) {
-    // Viewer mode: baseline is locked, sandbox is editable
     isViewer = true;
     loadState(shared, 'b');
     loadState(shared, 's');
@@ -771,7 +816,6 @@ function init() {
     document.getElementById('shareBar').style.display = 'none';
     document.getElementById('viewerBanner').style.display = 'block';
   } else {
-    // Owner mode: load saved baseline, sync to sandbox
     loadSavedBaseline();
     cloneBaselineToSandbox();
   }
