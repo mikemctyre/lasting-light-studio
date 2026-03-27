@@ -419,6 +419,19 @@
     </div>
 
     <div class="card">
+      <h2>Insurance (Monthly)</h2>
+      <div class="line-items" id="b_insurance">
+        <div class="line-item">
+          <input type="text" placeholder="Person" value="Co-Founder">
+          <input type="text" class="money-input" placeholder="$/mo" value="$0" oninput="fmtAndCalc(this,'b')">
+          <button class="btn-remove" onclick="removeLine(this,'b')" title="Remove">&times;</button>
+        </div>
+      </div>
+      <button class="btn-add" onclick="addInsurance('b_insurance','b')">+ Add person</button>
+      <div class="section-total">Subtotal: <span id="b_insuranceTotal">$0</span>/mo</div>
+    </div>
+
+    <div class="card">
       <h2>Tools & Services (Monthly)</h2>
       <div class="line-items" id="b_toolsCosts">
         <div class="line-item">
@@ -434,32 +447,6 @@
       </div>
       <button class="btn-add" onclick="addLine('b_toolsCosts','b')">+ Add service</button>
       <div class="section-total">Subtotal: <span id="b_toolsCostsTotal">$0</span>/mo</div>
-    </div>
-
-    <div class="card">
-      <h2>Other Costs (Monthly)</h2>
-      <div class="line-items" id="b_otherCosts">
-        <div class="line-item">
-          <input type="text" placeholder="Description" value="Office / coworking">
-          <input type="text" class="money-input" placeholder="$/mo" value="$0" oninput="fmtAndCalc(this,'b')">
-          <button class="btn-remove" onclick="removeLine(this,'b')" title="Remove">&times;</button>
-        </div>
-      </div>
-      <button class="btn-add" onclick="addLine('b_otherCosts','b')">+ Add expense</button>
-      <div class="section-total">Subtotal: <span id="b_otherCostsTotal">$0</span>/mo</div>
-    </div>
-
-    <div class="card">
-      <h2>Monthly Revenue (Optional)</h2>
-      <div class="line-items" id="b_revenueSources">
-        <div class="line-item">
-          <input type="text" placeholder="Source" value="Revenue">
-          <input type="text" class="money-input" placeholder="$/mo" value="$0" oninput="fmtAndCalc(this,'b')">
-          <button class="btn-remove" onclick="removeLine(this,'b')" title="Remove">&times;</button>
-        </div>
-      </div>
-      <button class="btn-add" onclick="addLine('b_revenueSources','b')">+ Add source</button>
-      <div class="section-total">Subtotal: <span id="b_revenueTotal">$0</span>/mo</div>
     </div>
 
     <div class="card">
@@ -538,6 +525,19 @@
     </div>
 
     <div class="card">
+      <h2>Insurance (Monthly)</h2>
+      <div class="line-items" id="s_insurance">
+        <div class="line-item">
+          <input type="text" placeholder="Person" value="Co-Founder">
+          <input type="text" class="money-input" placeholder="$/mo" value="$0" oninput="fmtAndCalc(this,'s')">
+          <button class="btn-remove" onclick="removeLine(this,'s')" title="Remove">&times;</button>
+        </div>
+      </div>
+      <button class="btn-add" onclick="addInsurance('s_insurance','s')">+ Add person</button>
+      <div class="section-total">Subtotal: <span id="s_insuranceTotal">$0</span>/mo</div>
+    </div>
+
+    <div class="card">
       <h2>Tools & Services (Monthly)</h2>
       <div class="line-items" id="s_toolsCosts">
         <div class="line-item">
@@ -553,32 +553,6 @@
       </div>
       <button class="btn-add" onclick="addLine('s_toolsCosts','s')">+ Add service</button>
       <div class="section-total">Subtotal: <span id="s_toolsCostsTotal">$0</span>/mo</div>
-    </div>
-
-    <div class="card">
-      <h2>Other Costs (Monthly)</h2>
-      <div class="line-items" id="s_otherCosts">
-        <div class="line-item">
-          <input type="text" placeholder="Description" value="Office / coworking">
-          <input type="text" class="money-input" placeholder="$/mo" value="$0" oninput="fmtAndCalc(this,'s')">
-          <button class="btn-remove" onclick="removeLine(this,'s')" title="Remove">&times;</button>
-        </div>
-      </div>
-      <button class="btn-add" onclick="addLine('s_otherCosts','s')">+ Add expense</button>
-      <div class="section-total">Subtotal: <span id="s_otherCostsTotal">$0</span>/mo</div>
-    </div>
-
-    <div class="card">
-      <h2>Monthly Revenue (Optional)</h2>
-      <div class="line-items" id="s_revenueSources">
-        <div class="line-item">
-          <input type="text" placeholder="Source" value="Revenue">
-          <input type="text" class="money-input" placeholder="$/mo" value="$0" oninput="fmtAndCalc(this,'s')">
-          <button class="btn-remove" onclick="removeLine(this,'s')" title="Remove">&times;</button>
-        </div>
-      </div>
-      <button class="btn-add" onclick="addLine('s_revenueSources','s')">+ Add source</button>
-      <div class="section-total">Subtotal: <span id="s_revenueTotal">$0</span>/mo</div>
     </div>
 
     <div class="card">
@@ -685,6 +659,18 @@ function removePerson(btn, prefix) {
   }
 }
 
+function addInsurance(sectionId, prefix) {
+  const container = document.getElementById(sectionId);
+  const div = document.createElement('div');
+  div.className = 'line-item';
+  div.innerHTML = `
+    <input type="text" placeholder="Person">
+    <input type="text" class="money-input" placeholder="$/mo" value="$0" oninput="fmtAndCalc(this,'${prefix}')">
+    <button class="btn-remove" onclick="removeLine(this,'${prefix}')" title="Remove">&times;</button>
+  `;
+  container.appendChild(div);
+}
+
 function calc(p) {
   const cashBank = parseMoney(document.getElementById(p + '_cashBank').value);
   const cashPending = parseMoney(document.getElementById(p + '_cashPending').value);
@@ -704,17 +690,15 @@ function calc(p) {
     row.querySelector('.salary-monthly').textContent = '= ' + fmtMoney(monthly) + '/mo';
     people += monthly;
   });
+  const insurance = sumSectionMoney(p + '_insurance');
   const tools = sumSectionMoney(p + '_toolsCosts');
-  const other = sumSectionMoney(p + '_otherCosts');
-  const revenue = sumSectionMoney(p + '_revenueSources');
 
   document.getElementById(p + '_peopleCostsTotal').textContent = fmtMoney(people);
+  document.getElementById(p + '_insuranceTotal').textContent = fmtMoney(insurance);
   document.getElementById(p + '_toolsCostsTotal').textContent = fmtMoney(tools);
-  document.getElementById(p + '_otherCostsTotal').textContent = fmtMoney(other);
-  document.getElementById(p + '_revenueTotal').textContent = fmtMoney(revenue);
 
-  const grossBurn = people + tools + other;
-  const netBurn = grossBurn - revenue;
+  const grossBurn = people + insurance + tools;
+  const netBurn = grossBurn;
   const dailyBurn = netBurn / 30;
   const weeklyBurn = netBurn / 4.33;
 
@@ -827,9 +811,8 @@ function getFullState() {
     debtReimbursement: parseMoney(document.getElementById('b_debtReimbursement').value),
     debtInvoices: parseMoney(document.getElementById('b_debtInvoices').value),
     people: getPeopleData('b_peopleCosts'),
-    tools: getSectionData('b_toolsCosts'),
-    other: getSectionData('b_otherCosts'),
-    revenue: getSectionData('b_revenueSources')
+    insurance: getSectionData('b_insurance'),
+    tools: getSectionData('b_toolsCosts')
   };
 }
 
@@ -839,9 +822,8 @@ function loadState(state, prefix) {
   document.getElementById(prefix + '_debtReimbursement').value = fmtMoney(state.debtReimbursement || 0);
   document.getElementById(prefix + '_debtInvoices').value = fmtMoney(state.debtInvoices || 0);
   setPeopleData(prefix + '_peopleCosts', prefix, state.people || []);
+  setSectionData(prefix + '_insurance', prefix, state.insurance || []);
   setSectionData(prefix + '_toolsCosts', prefix, state.tools || []);
-  setSectionData(prefix + '_otherCosts', prefix, state.other || []);
-  setSectionData(prefix + '_revenueSources', prefix, state.revenue || []);
   calc(prefix);
 }
 
