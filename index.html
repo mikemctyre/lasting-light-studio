@@ -324,26 +324,33 @@
   .salary-row {
     display: flex;
     gap: 0.5rem;
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.4rem;
     align-items: center;
-    padding-bottom: 0.6rem;
-    border-bottom: 1px solid #2a2a44;
   }
 
-  .salary-row label {
+  .salary-row .name-input {
+    flex: 1;
+    padding: 0.4rem 0.6rem;
+    background: #12122a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: #fff;
     font-size: 0.8rem;
-    color: #aaa;
-    white-space: nowrap;
+    outline: none;
   }
+
+  .salary-row .name-input:focus { border-color: #c4a0ff; }
 
   .salary-row .money-input {
     width: 120px;
   }
 
   .salary-monthly {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: #c4a0ff;
     white-space: nowrap;
+    min-width: 80px;
+    text-align: right;
   }
 
   .panel-sandbox .salary-monthly {
@@ -399,14 +406,15 @@
 
     <div class="card">
       <h2>People Costs (Monthly)</h2>
-      <div class="salary-row">
-        <label>Co-Founder Salary (annual)</label>
-        <input type="text" class="money-input" id="b_cofounderSalary" value="$0" oninput="fmtAndCalc(this,'b')">
-        <span class="salary-monthly" id="b_cofounderMonthly">= $0/mo</span>
-      </div>
       <div class="line-items" id="b_peopleCosts">
+        <div class="salary-row">
+          <input type="text" class="name-input" placeholder="Name / Role" value="Co-Founder">
+          <input type="text" class="money-input" placeholder="Annual" value="$0" oninput="fmtAndCalc(this,'b')">
+          <span class="salary-monthly">= $0/mo</span>
+          <button class="btn-remove" onclick="removePerson(this,'b')" title="Remove">&times;</button>
+        </div>
       </div>
-      <button class="btn-add" onclick="addLine('b_peopleCosts','b')">+ Add person</button>
+      <button class="btn-add" onclick="addPerson('b_peopleCosts','b')">+ Add person</button>
       <div class="section-total">Subtotal: <span id="b_peopleCostsTotal">$0</span>/mo</div>
     </div>
 
@@ -517,14 +525,15 @@
 
     <div class="card">
       <h2>People Costs (Monthly)</h2>
-      <div class="salary-row">
-        <label>Co-Founder Salary (annual)</label>
-        <input type="text" class="money-input" id="s_cofounderSalary" value="$0" oninput="fmtAndCalc(this,'s')">
-        <span class="salary-monthly" id="s_cofounderMonthly">= $0/mo</span>
-      </div>
       <div class="line-items" id="s_peopleCosts">
+        <div class="salary-row">
+          <input type="text" class="name-input" placeholder="Name / Role" value="Co-Founder">
+          <input type="text" class="money-input" placeholder="Annual" value="$0" oninput="fmtAndCalc(this,'s')">
+          <span class="salary-monthly">= $0/mo</span>
+          <button class="btn-remove" onclick="removePerson(this,'s')" title="Remove">&times;</button>
+        </div>
       </div>
-      <button class="btn-add" onclick="addLine('s_peopleCosts','s')">+ Add person</button>
+      <button class="btn-add" onclick="addPerson('s_peopleCosts','s')">+ Add person</button>
       <div class="section-total">Subtotal: <span id="s_peopleCostsTotal">$0</span>/mo</div>
     </div>
 
@@ -647,7 +656,28 @@ function addLine(sectionId, prefix) {
   container.appendChild(div);
 }
 
+function addPerson(sectionId, prefix) {
+  const container = document.getElementById(sectionId);
+  const div = document.createElement('div');
+  div.className = 'salary-row';
+  div.innerHTML = `
+    <input type="text" class="name-input" placeholder="Name / Role">
+    <input type="text" class="money-input" placeholder="Annual" value="$0" oninput="fmtAndCalc(this,'${prefix}')">
+    <span class="salary-monthly">= $0/mo</span>
+    <button class="btn-remove" onclick="removePerson(this,'${prefix}')" title="Remove">&times;</button>
+  `;
+  container.appendChild(div);
+}
+
 function removeLine(btn, prefix) {
+  const section = btn.closest('.line-items');
+  if (section.children.length > 1) {
+    btn.parentElement.remove();
+    calc(prefix);
+  }
+}
+
+function removePerson(btn, prefix) {
   const section = btn.closest('.line-items');
   if (section.children.length > 1) {
     btn.parentElement.remove();
@@ -666,12 +696,14 @@ function calc(p) {
   const debt = debtReimburse + debtInvoices;
   document.getElementById(p + '_debtTotal').textContent = fmtMoney(debt);
 
-  const cofounderAnnual = parseMoney(document.getElementById(p + '_cofounderSalary').value);
-  const cofounderMonthly = Math.round(cofounderAnnual / 12);
-  document.getElementById(p + '_cofounderMonthly').textContent = '= ' + fmtMoney(cofounderMonthly) + '/mo';
-
-  const peopleOther = sumSectionMoney(p + '_peopleCosts');
-  const people = cofounderMonthly + peopleOther;
+  // Calculate people costs: each row is annual salary, auto-calc monthly
+  let people = 0;
+  document.querySelectorAll('#' + p + '_peopleCosts .salary-row').forEach(row => {
+    const annual = parseMoney(row.querySelector('.money-input').value);
+    const monthly = Math.round(annual / 12);
+    row.querySelector('.salary-monthly').textContent = '= ' + fmtMoney(monthly) + '/mo';
+    people += monthly;
+  });
   const tools = sumSectionMoney(p + '_toolsCosts');
   const other = sumSectionMoney(p + '_otherCosts');
   const revenue = sumSectionMoney(p + '_revenueSources');
@@ -747,6 +779,32 @@ function getSectionData(sectionId) {
   return items;
 }
 
+function getPeopleData(sectionId) {
+  const items = [];
+  document.querySelectorAll('#' + sectionId + ' .salary-row').forEach(row => {
+    const name = row.querySelector('.name-input').value;
+    const annual = parseMoney(row.querySelector('.money-input').value);
+    items.push({ name, annual });
+  });
+  return items;
+}
+
+function setPeopleData(sectionId, prefix, items) {
+  const container = document.getElementById(sectionId);
+  container.innerHTML = '';
+  items.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'salary-row';
+    div.innerHTML = `
+      <input type="text" class="name-input" placeholder="Name / Role" value="${String(item.name).replace(/"/g, '&quot;')}">
+      <input type="text" class="money-input" placeholder="Annual" value="${fmtMoney(item.annual)}" oninput="fmtAndCalc(this,'${prefix}')">
+      <span class="salary-monthly">= ${fmtMoney(Math.round(item.annual / 12))}/mo</span>
+      <button class="btn-remove" onclick="removePerson(this,'${prefix}')" title="Remove">&times;</button>
+    `;
+    container.appendChild(div);
+  });
+}
+
 function setSectionData(sectionId, prefix, items) {
   const container = document.getElementById(sectionId);
   container.innerHTML = '';
@@ -768,8 +826,7 @@ function getFullState() {
     cashPending: parseMoney(document.getElementById('b_cashPending').value),
     debtReimbursement: parseMoney(document.getElementById('b_debtReimbursement').value),
     debtInvoices: parseMoney(document.getElementById('b_debtInvoices').value),
-    cofounderSalary: parseMoney(document.getElementById('b_cofounderSalary').value),
-    people: getSectionData('b_peopleCosts'),
+    people: getPeopleData('b_peopleCosts'),
     tools: getSectionData('b_toolsCosts'),
     other: getSectionData('b_otherCosts'),
     revenue: getSectionData('b_revenueSources')
@@ -781,8 +838,7 @@ function loadState(state, prefix) {
   document.getElementById(prefix + '_cashPending').value = fmtMoney(state.cashPending || 0);
   document.getElementById(prefix + '_debtReimbursement').value = fmtMoney(state.debtReimbursement || 0);
   document.getElementById(prefix + '_debtInvoices').value = fmtMoney(state.debtInvoices || 0);
-  document.getElementById(prefix + '_cofounderSalary').value = fmtMoney(state.cofounderSalary || 0);
-  setSectionData(prefix + '_peopleCosts', prefix, state.people || []);
+  setPeopleData(prefix + '_peopleCosts', prefix, state.people || []);
   setSectionData(prefix + '_toolsCosts', prefix, state.tools || []);
   setSectionData(prefix + '_otherCosts', prefix, state.other || []);
   setSectionData(prefix + '_revenueSources', prefix, state.revenue || []);
