@@ -432,6 +432,19 @@
     </div>
 
     <div class="card">
+      <h2>Co-Dev (Monthly)</h2>
+      <div class="line-items" id="b_codev">
+        <div class="line-item">
+          <input type="text" placeholder="Person / Service">
+          <input type="text" class="money-input" placeholder="$/mo" value="$0" oninput="fmtAndCalc(this,'b')">
+          <button class="btn-remove" onclick="removeLine(this,'b')" title="Remove">&times;</button>
+        </div>
+      </div>
+      <button class="btn-add" onclick="addLine('b_codev','b')">+ Add co-dev</button>
+      <div class="section-total">Subtotal: <span id="b_codevTotal">$0</span>/mo</div>
+    </div>
+
+    <div class="card">
       <h2>Tools & Services (Monthly)</h2>
       <div class="line-items" id="b_toolsCosts">
         <div class="line-item">
@@ -535,6 +548,19 @@
       </div>
       <button class="btn-add" onclick="addInsurance('s_insurance','s')">+ Add person</button>
       <div class="section-total">Subtotal: <span id="s_insuranceTotal">$0</span>/mo</div>
+    </div>
+
+    <div class="card">
+      <h2>Co-Dev (Monthly)</h2>
+      <div class="line-items" id="s_codev">
+        <div class="line-item">
+          <input type="text" placeholder="Person / Service">
+          <input type="text" class="money-input" placeholder="$/mo" value="$0" oninput="fmtAndCalc(this,'s')">
+          <button class="btn-remove" onclick="removeLine(this,'s')" title="Remove">&times;</button>
+        </div>
+      </div>
+      <button class="btn-add" onclick="addLine('s_codev','s')">+ Add co-dev</button>
+      <div class="section-total">Subtotal: <span id="s_codevTotal">$0</span>/mo</div>
     </div>
 
     <div class="card">
@@ -691,13 +717,15 @@ function calc(p) {
     people += monthly;
   });
   const insurance = sumSectionMoney(p + '_insurance');
+  const codev = sumSectionMoney(p + '_codev');
   const tools = sumSectionMoney(p + '_toolsCosts');
 
   document.getElementById(p + '_peopleCostsTotal').textContent = fmtMoney(people);
   document.getElementById(p + '_insuranceTotal').textContent = fmtMoney(insurance);
+  document.getElementById(p + '_codevTotal').textContent = fmtMoney(codev);
   document.getElementById(p + '_toolsCostsTotal').textContent = fmtMoney(tools);
 
-  const grossBurn = people + insurance + tools;
+  const grossBurn = people + insurance + codev + tools;
   const netBurn = grossBurn;
   const dailyBurn = netBurn / 30;
   const weeklyBurn = netBurn / 4.33;
@@ -812,6 +840,7 @@ function getFullState() {
     debtInvoices: parseMoney(document.getElementById('b_debtInvoices').value),
     people: getPeopleData('b_peopleCosts'),
     insurance: getSectionData('b_insurance'),
+    codev: getSectionData('b_codev'),
     tools: getSectionData('b_toolsCosts')
   };
 }
@@ -823,6 +852,7 @@ function loadState(state, prefix) {
   document.getElementById(prefix + '_debtInvoices').value = fmtMoney(state.debtInvoices || 0);
   setPeopleData(prefix + '_peopleCosts', prefix, state.people || []);
   setSectionData(prefix + '_insurance', prefix, state.insurance || []);
+  setSectionData(prefix + '_codev', prefix, state.codev || []);
   setSectionData(prefix + '_toolsCosts', prefix, state.tools || []);
   calc(prefix);
 }
